@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment secrets
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Specific project backend env file
+Resume Analyzer/backend/.env
+Resume Analyzer/backend/.env.*

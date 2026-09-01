@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SkillScan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<!-- Navigation -->
+<nav class="bg-white shadow-md fixed top-0 left-0 right-0 z-50 h-16 sm:h-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16 sm:h-20">
+            <div class="flex-shrink-0 flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-indigo-600">SkillScan</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-700 text-primary transition">Home</a>
+                <a href="how_it_works.html" class="text-gray-700 hover:text-indigo-600 transition">How It Works</a>
+                <a href="find_roadmap.html" class="text-gray-700 hover:text-indigo-600 transition">Find Roadmap</a>
+                <a href="pricing.html" class="text-gray-700 hover:text-indigo-600 transition">Pricing</a>
+                <a href="contactus.html" class="text-gray-700 hover:text-indigo-600 transition">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="user-name" class="text-gray-700 font-medium"></span>
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm">Logout</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="pt-20 sm:pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Welcome Section -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 sm:p-12 text-white mb-8">
+            <h1 id="welcome-message" class="text-3xl sm:text-4xl font-bold mb-4"></h1>
+            <p class="text-lg opacity-90">Welcome to your SkillScan dashboard. Start building your career roadmap today!</p>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Profile Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Your Profile</h3>
+                <p class="text-gray-600" id="profile-email"></p>
+            </div>
+
+            <!-- Resume Analysis Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Analyze Resume</h3>
+                <p class="text-gray-600">Upload your resume and get personalized career recommendations</p>
+                <a href="sample_resume.html" class="inline-block mt-4 text-indigo-600 font-semibold hover:underline">Start Now →</a>
+            </div>
+
+            <!-- Career Roadmap Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Career Roadmap</h3>
+                <p class="text-gray-600">Discover your personalized learning path to achieve your career goals</p>
+                <a href="find_roadmap.html" class="inline-block mt-4 text-indigo-600 font-semibold hover:underline">Explore →</a>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="sample_resume.html" class="flex items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">
+                    <svg class="w-6 h-6 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                    <span class="font-medium text-gray-700">Upload Resume</span>
+                </a>
+                <a href="find_roadmap.html" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition">
+                    <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span class="font-medium text-gray-700">Find Roadmap</span>
+                </a>
+                <a href="pricing.html" class="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+                    <svg class="w-6 h-6 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="font-medium text-gray-700">View Pricing</span>
+                </a>
+                <a href="contactus.html" class="flex items-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">
+                    <svg class="w-6 h-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <span class="font-medium text-gray-700">Get Support</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-gray-400">© 2024 SkillScan. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    // Check if user is logged in
+    const user = localStorage.getItem('user');
+    
+    if (!user) {
+        // Not logged in, redirect to login
+        window.location.href = 'login.html';
+    } else {
+        const userData = JSON.parse(user);
+        document.getElementById('welcome-message').textContent = `Welcome, ${userData.name}!`;
+        document.getElementById('user-name').textContent = userData.name;
+        document.getElementById('profile-email').textContent = userData.email;
+    }
+
+    function logout() {
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    }
+</script>
+
+</body>
+</html>
+

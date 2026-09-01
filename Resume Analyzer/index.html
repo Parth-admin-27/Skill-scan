@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillScan — AI Resume Analyzer & Career Roadmap</title>
+    <meta name="description"
+        content="SkillScan uses AI to analyze your resume, detect skill gaps, score ATS compatibility, and generate personalized career roadmaps.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="output.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'primary': '#4f46e5' },
+                    fontFamily: {
+                        'display': ['Poppins', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-white">
+
+    <!-- ========== NAVBAR ========== -->
+    <nav
+        class="nav-glass p-4 flex justify-between items-center fixed top-0 left-0 right-0 z-20 border-b border-gray-100">
+        <a href="index.html" id="brand" class="flex gap-2 items-center flex-1">
+            <img class="object-cover max-w-10 max-h-10" src="./assets/asset 0.png" alt="SkillScan Logo">
+            <span class="text-xl font-semibold font-display text-indigo-600">SkillScan</span>
+        </a>
+        <div id="nav-menu" class="hidden lg:flex gap-10">
+            <a href="find_roadmap.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">Find
+                Roadmap</a>
+            <a href="aboutus.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">About Us</a>
+            <a href="how_it_works.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">How It
+                Works</a>
+            <a href="pricing.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">Pricing</a>
+            <a href="contactus.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">Contact Us</a>
+            <a href="faqs.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">FAQs</a>
+        </div>
+        <div class="hidden lg:flex flex-1 justify-end">
+            <a href="signup.html">
+                <button class="btn-outline flex gap-2 items-center text-sm py-2 px-5">
+                    <i class="fa-solid fa-user text-indigo-500"></i>
+                    <span class="font-display font-medium">Login / Sign up</span>
+                </button>
+            </a>
+        </div>
+
+        <!-- Mobile menu button -->
+        <button class="p-2 lg:hidden" onclick="handleMenu()">
+            <i class="fa-solid fa-bars text-gray-600 text-xl"></i>
+        </button>
+
+        <!-- Mobile menu dialog -->
+        <div id="nav-dialog" class="hidden fixed z-10 md:hidden bg-white inset-0 p-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex gap-2 items-center">
+                    <img class="object-cover max-w-10 max-h-10" src="./assets/asset 0.png" alt="SkillScan Logo">
+                    <span class="text-xl font-semibold font-display text-indigo-600">SkillScan</span>
+                </a>
+                <button class="p-2" onclick="handleMenu()">
+                    <i class="fa-solid fa-xmark text-gray-600 text-xl"></i>
+                </button>
+            </div>
+            <div class="mt-8 flex flex-col gap-1">
+                <a href="find_roadmap.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg transition">Find
+                    Roadmap</a>
+                <a href="aboutus.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg transition">About Us</a>
+                <a href="how_it_works.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg transition">How It
+                    Works</a>
+                <a href="pricing.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg transition">Pricing</a>
+                <a href="contactus.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg transition">Contact Us</a>
+                <a href="faqs.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg transition">FAQs</a>
+            </div>
+            <div class="h-[1px] bg-gray-200 mt-4"></div>
+            <a href="signup.html">
+                <button
+                    class="mt-4 w-full flex gap-2 items-center justify-center px-6 py-3 rounded-lg bg-indigo-600 text-white font-medium">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Login / Sign up</span>
+                </button>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN ========== -->
+    <main class="mt-16">
+
+        <!-- ===== HERO SECTION ===== -->
+        <section id="hero" class="hero-gradient min-h-screen flex items-center">
+            <div class="max-w-4xl mx-auto px-6 py-20 flex flex-col items-center text-center">
+                <div
+                    class="flex items-center gap-2 mb-8 border border-gray-200 bg-gray-50 rounded-full px-4 py-1.5 text-sm animate-on-scroll lg:border-indigo-300 lg:bg-indigo-100">
+                    <div class="w-2 h-2 bg-gray-400 rounded-full lg:bg-indigo-500"></div>
+                    <span class="font-medium text-gray-700 lg:text-indigo-700">
+                        v0.21.1 — Skill Gap Detection Added
+                    </span>
+                </div>
+                <!-- Feature pills -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8 animate-on-scroll">
+                    <div class="flex items-center gap-2 text-gray-500 text-sm">
+                        <i class="fa-solid fa-brain text-indigo-400"></i>
+                        <span>Smart Evaluation</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-gray-500 text-sm">
+                        <i class="fa-solid fa-file-circle-check text-indigo-400"></i>
+                        <span>ATS Check</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-gray-500 text-sm">
+                        <i class="fa-solid fa-magnifying-glass-chart text-indigo-400"></i>
+                        <span>Skill Analysis</span>
+                    </div>
+                </div>
+
+                <!-- Headline -->
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 animate-on-scroll">
+                    Analyze Resume.<br>Accelerate Career.
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-lg sm:text-xl mt-6 text-gray-600 max-w-2xl animate-on-scroll">
+                    Transform your job search with AI that makes you 3× more likely to land interviews and get hired.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="mt-10 flex gap-4 flex-col sm:flex-row animate-on-scroll">
+                    <a href="sample_resume.html"><button class="btn-primary">Upload Resume</button></a>
+                    <a href="sample_resume.html"><button class="btn-outline">View Sample Report</button></a>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- About Us Bento Grid -->
+        <div id="about-bento" class="container my-24">
+
+            <h2 class="text-5xl sm:font-semibold mb-14 max-w-3xl leading-normal ">
+                About SkillScan
+            </h2>
+
+            <div class="flex flex-col gap-6 lg:grid lg:grid-cols-3" style="grid-auto-rows: 130px;">
+
+                <!-- Our Mission -->
+                <div class="row-start-1 row-end-3 rounded-2xl bg-gray-50 p-8 shadow-md">
+                    <h3 class="text-2xl mb-4 text-gray-800">Our Mission</h3>
+                    <p class="text-gray-600 font-light leading-relaxed">
+                        Our mission is to empower job seekers with intelligent AI-driven tools
+                        that enhance resume quality, optimize ATS compatibility, and increase
+                        interview opportunities.
+                    </p>
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        We aim to remove guesswork from resume building and provide clear,
+                        actionable insights that deliver measurable results.
+                    </p>
+                </div>
+
+                <!-- Our Vision -->
+                <div class="row-start-1 row-end-4 rounded-2xl bg-gray-50 p-8 shadow-md">
+                    <h3 class="text-2xl mb-4 text-gray-800">Our Vision</h3>
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        We strive to build a career ecosystem where data-driven insights guide
+                        every job seeker toward better decisions. Our vision is to reduce
+                        unemployment gaps by equipping individuals with intelligent resume
+                        strategies tailored to industry demands.
+                    </p>
+                    &nbsp;
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        Through continuous innovation and research, we aim to redefine how
+                        resumes are evaluated, ensuring that talent is recognized based on
+                        skills, impact, and real potential — not just formatting.
+                    </p>
+                </div>
+
+                <!-- Our Values -->
+                <div class="row-start-1 row-end-3 rounded-2xl bg-gray-50 p-8 shadow-md">
+                    <h3 class="text-2xl mb-4 text-gray-800">Our Values</h3>
+                    <ul class="text-gray-600 font-light space-y-3 leading-relaxed">
+                        <li>• Innovation – Continuously improving our AI technology.</li>
+                        <li>• Transparency – Clear feedback and honest insights.</li>
+                        <li>• Reliability – Secure and dependable platform experience.</li>
+                    </ul>
+                </div>
+
+                <!-- Who We Are -->
+                <div class="row-start-3 row-end-6 rounded-2xl bg-gray-50 p-8 shadow-md">
+                    <h3 class="text-2xl mb-4 text-gray-800">Who We Are</h3>
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        Our team consists of software engineers, AI specialists, and HR
+                        professionals who understand both technology and real-world
+                        recruitment challenges.
+                    </p>
+                    &nbsp;
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        We believe that every candidate deserves a fair opportunity.
+                        That’s why we design solutions that simplify complex hiring
+                        systems and make resume optimization accessible to everyone.
+                    </p>
+                </div>
+
+                <!-- Our Impact -->
+                <div class="row-start-4 row-end-6 rounded-2xl bg-gray-50 p-8 shadow-md">
+                    <h3 class="text-2xl mb-4 text-gray-800">Our Impact</h3>
+                    <p class="text-gray-600 font-light leading-relaxed">
+                        Thousands of resumes have been analyzed and optimized through our system,
+                        helping users significantly improve their ATS scores.
+                    </p>
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        Our users report higher interview callback rates and stronger confidence
+                        in their job applications.
+                    </p>
+                </div>
+
+                <!-- Our Technology -->
+                <div class="row-start-3 row-end-6 rounded-2xl bg-gray-50 p-8 shadow-md">
+                    <h3 class="text-2xl mb-4 text-gray-800">Our Technology</h3>
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        Our AI engine performs deep keyword analysis, semantic matching,
+                        and structural evaluation to ensure resumes meet Applicant
+                        Tracking System (ATS) standards.
+                    </p>
+                    &nbsp;
+                    <p class="text-gray-600 font-light leading-relaxed mt-3">
+                        Built with scalability and security in mind, our platform
+                        processes resumes in real time while maintaining strict data
+                        privacy and encryption standards.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+        <!-- Testimonials -->
+        <div id="testimonials" class="container">
+            <h2 class="text-5xl sm:font-semibold mb-14">Success stories</h2>
+            <div class="rounded-xl border flex flex-col lg:flex-row items-end">
+                <div class="flex flex-col gap-12 p-8">
+                    <div class="h-4 w-fit">
+                        <img src="./assets/asset 44.svg" alt="">
+                    </div>
+                    <h3 class="text-xl leading-relaxed">Students used SkillScan to improve their resumes and increase
+                        interview calls within weeks.</h3>
+                    <div id="tag-container" class="flex gap-3 flex-wrap">
+                        <div
+                            class="flex gap-2 items-center justify-center bg-yellow-50 w-fit border border-yellow-300 px-3 py-1 rounded-md text-yellow-800">
+                            <i class="fa-solid fa-check"></i>
+                            <span class="font-display font-medium">AI Skill Detection</span>
+                        </div>
+                        <div
+                            class="flex gap-2 items-center justify-center bg-yellow-50 w-fit border border-yellow-300 px-3 py-1 rounded-md text-yellow-800">
+                            <i class="fa-solid fa-check"></i>
+                            <span class="font-display font-medium">ATS Score Analysis</span>
+                        </div>
+                        <div
+                            class="flex gap-2 items-center justify-center bg-yellow-50 w-fit border border-yellow-300 px-3 py-1 rounded-md text-yellow-800">
+                            <i class="fa-solid fa-check"></i>
+                            <span class="font-display font-medium">Skill Gap Identification</span>
+                        </div>
+                        <div
+                            class="flex gap-2 items-center justify-center bg-yellow-50 w-fit border border-yellow-300 px-3 py-1 rounded-md text-yellow-800">
+                            <i class="fa-solid fa-check"></i>
+                            <span class="font-display font-medium">Career Roadmap</span>
+                        </div>
+                        <div
+                            class="flex gap-2 items-center justify-center bg-yellow-50 w-fit border border-yellow-300 px-3 py-1 rounded-md text-yellow-800">
+                            <i class="fa-solid fa-check"></i>
+                            <span class="font-display font-medium">Resume Suggestions</span>
+                        </div>
+                    </div>
+                    <p class="text-lg font-light text-gray-500">“SkillScan helped me identify <span
+                            class="text-gray-800">missing backend skills</span> and optimize my resume for ATS systems.
+                        After applying the improvements, I started receiving <span class="text-gray-800">more interview
+                            calls</span> within a short time.”</p>
+                    <div id="user-card" class="flex gap-4">
+                        <div class="w-12">
+                            <img src="./assets/asset 45.jpeg" class="rounded-full" alt="">
+                        </div>
+                        <div class="flex flex-col">
+                            <h3>Rahul Sharma</h3>
+                            <p class="text-gray-500">Final Year Engineering Student</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <img src="./assets/asset 46.png" class="pl-12" alt="">
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row justify-between gap-4 mt-6">
+
+                <div class="rounded-2xl gradient-hover-outer group">
+                    <div class="rounded-2xl p-6 gradient-hover-inner flex flex-col gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-200 flex items-center justify-center rounded-full">
+                                <i class="fa-solid fa-chart-line text-indigo-800"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold">ATS Optimization</h3>
+                        </div>
+                        <p class="text-lg font-light">SkillScan analyzes resume keywords and structure to ensure higher
+                            compatibility with Applicant Tracking Systems used by companies.</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col">
+                                <h3>Priya Mehta</h3>
+                                <a href="#" class="anchor-hover w-fit text-gray-500">Job Seeker</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl gradient-hover-outer group">
+                    <div class="rounded-2xl p-6 gradient-hover-inner flex flex-col gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-200 flex items-center justify-center rounded-full">
+                                <i class="fa-solid fa-brain text-indigo-800"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold">AI Skill Insights</h3>
+                        </div>
+                        <p class="text-lg font-light">Our AI engine intelligently extracts technical and soft skills,
+                            helping users understand their strengths and areas for improvement.</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col">
+                                <h3>Amit Verma</h3>
+                                <a href="#" class="anchor-hover w-fit text-gray-500">Software Developer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl gradient-hover-outer group">
+                    <div class="rounded-2xl p-6 gradient-hover-inner flex flex-col gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-200 flex items-center justify-center rounded-full">
+                                <i class="fa-solid fa-road text-indigo-800"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold">Career Roadmap</h3>
+                        </div>
+                        <p class="text-lg font-light">SkillScan generates a personalized learning roadmap to help users
+                            acquire in-demand skills and grow confidently in their careers.</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col">
+                                <h3>Sneha Patel</h3>
+                                <a href="#" class="anchor-hover w-fit text-gray-500">Data Analyst Aspirant</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="rounded-2xl flex flex-col bg-black lg:flex-row mt-12 pt-6 lg:pt-10">
+                <div class="flex flex-col gap-4 p-8 lg:flex-1 lg:gap-8">
+                    <span class="text-gray-400 font-display font-medium">READY TO IMPROVE YOUR RESUME?</span>
+                    <h2 class="text-4xl text-white leading-tight lg:text-5xl">Start analyzing your resume today</h2>
+                    <p class="text-lg font-light text-gray-400 lg:text-xl">Upload your resume and get AI-powered
+                        insights, ATS scoring, and a personalized career roadmap in minutes.</p>
+                    <a href="signup.html"
+                        class="bg-primary text-white py-3 rounded-lg hover:bg-opacity-90 flex justify-center items-center gap-4">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>Upload Resume Now</span>
+                    </a>
+                    <p class="text-gray-400 text-xs italic leading-tight">*Basic resume analysis is free. Advanced
+                        features may require a premium plan.</p>
+                </div>
+                <div class="lg:w-1/2">
+                    <img src="./assets/asset 46.png" class="pl-12" alt="">
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Pricing -->
+        <div id="pricing" class="container">
+            <h2 class="h2-style">Choose a plan that fits your needs</h2>
+            <div class="flex flex-col lg:flex-row mt-6 gap-6">
+
+                <!-- Free Plan -->
+                <div class="border flex-1 rounded-xl px-8 pt-12 pb-8 flex flex-col gap-6 lg:border-none lg:bg-slate-50">
+                    <h3 class="text-4xl">Free</h3>
+                    <p class="text-lg font-light">
+                        For students and job seekers getting started with resume analysis.
+                    </p>
+                    <p class="uppercase">Key Features</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Resume Upload (PDF/DOCX)</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Basic Skill Extraction</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-xmark text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Advanced ATS Score</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-xmark text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Personalized Career Roadmap</span>
+                        </li>
+                    </ul>
+                    <a href="signup.html"
+                        class="border px-8 py-3 text-primary rounded-lg hover:border-gray-800 font-display font-medium inline-flex justify-center items-center text-center">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Essential Plan -->
+                <div class="border flex-1 rounded-xl px-8 pt-12 pb-8 flex flex-col gap-6 lg:border-none lg:bg-slate-50">
+                    <h3 class="text-4xl">Essential</h3>
+                    <p class="text-lg font-light">For serious candidates improving interview chances.</p>
+                    <p class="text-lg font-light"><span class="text-2xl font-semibold">₹299</span>/month</p>
+                    <p class="uppercase">Key Features</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Everything in Free Plan</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Detailed ATS Compatibility Score</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Resume Improvement Suggestions</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-xmark text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Downloadable PDF Report</span>
+                        </li>
+                    </ul>
+                    <button
+                        class="border px-8 py-3 text-primary rounded-lg hover:border-gray-800 font-display font-medium">
+                        Upgrade Plan
+                    </button>
+                </div>
+
+                <!-- Professional Plan -->
+                <div
+                    class="border flex-1 relative rounded-xl px-8 pt-12 pb-8 flex flex-col gap-6 lg:border-none lg:bg-slate-50">
+                    <p
+                        class="text-blue-800 text-sm bg-indigo-100 rounded-full w-fit px-4 py-2 font-display font-semibold absolute top-0 right-8 -translate-y-1/2">
+                        Most Popular</p>
+                    <h3 class="text-4xl">Professional</h3>
+                    <p class="text-lg font-light">For advanced career growth and full AI insights.</p>
+                    <p class="text-lg font-light"><span class="text-2xl font-semibold">₹599</span>/month</p>
+                    <p class="uppercase">Key Features</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Everything in Essential Plan</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Personalized Career Roadmap</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Downloadable PDF Report</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <i class="fa-solid fa-check text-gray-500"></i>
+                            <span class="text-lg font-light text-gray-800">Priority Support</span>
+                        </li>
+                    </ul>
+                    <button
+                        class="px-8 py-3 text-white bg-primary rounded-lg hover:bg-opacity-90 font-display font-medium">
+                        Go Professional
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- FAQs -->
+        <div id="faq" class="container">
+            <h2 class="h2-style">FAQs</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 mt-6 gap-6 items-start">
+                <div class="group rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="cursor-pointer flex justify-between items-center" aria-controls="faq-1">
+                        <p class="font-semibold text-lg">What is SkillScan and how does it work?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-1" class="hidden text-lg font-light mt-6">
+                        <p>SkillScan is an AI-powered resume analyzer that evaluates your resume, extracts key skills,
+                            checks ATS compatibility, and provides personalized career improvement suggestions. Simply
+                            upload your resume, and the system generates a detailed analysis report within seconds.</p>
+                    </dd>
+                </div>
+                <div class="group cursor-pointer rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="flex justify-between items-center" aria-controls="faq-2">
+                        <p class="font-semibold text-lg">Is SkillScan free to use?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-2" class="hidden text-lg font-light mt-6">
+                        <p>Yes. SkillScan offers a free version that allows users to upload their resume and receive
+                            basic skill analysis and improvement suggestions. Advanced features may be included in
+                            future premium plans.</p>
+                    </dd>
+                </div>
+                <div class="group rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="cursor-pointer flex justify-between items-center" aria-controls="faq-3">
+                        <p class="font-semibold text-lg">What file formats are supported?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-3" class="hidden text-lg font-light mt-6">
+                        <p>SkillScan currently supports:
+
+                            PDF (.pdf)
+
+                            Word Documents (.docx)
+
+                            More formats may be added in future updates.</p>
+                    </dd>
+                </div>
+                <div class="group cursor-pointer rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="flex justify-between items-center" aria-controls="faq-4">
+                        <p class="font-semibold text-lg">How accurate is the AI analysis?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-4" class="hidden text-lg font-light mt-6">
+                        <p>SkillScan uses intelligent text extraction and natural language processing techniques to
+                            identify skills, keywords, and experience. While it provides strong insights, users should
+                            review suggestions carefully before making final resume changes.</p>
+                    </dd>
+                </div>
+                <div class="group rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="cursor-pointer flex justify-between items-center" aria-controls="faq-5">
+                        <p class="font-semibold text-lg">Can SkillScan guarantee I will get a job?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-5" class="hidden text-lg font-light mt-6">
+                        <p> No tool can guarantee a job. However, SkillScan helps optimize your resume, identify skill
+                            gaps, and improve ATS compatibility — significantly increasing your chances of landing
+                            interviews.</p>
+                    </dd>
+                </div>
+                <div class="group cursor-pointer rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="flex justify-between items-center" aria-controls="faq-6">
+                        <p class="font-semibold text-lg">Is my resume data secure?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-6" class="hidden text-lg font-light mt-6">
+                        <p>Yes. Your resume is processed securely and is not shared with third parties. User privacy and
+                            data protection are a top priority for SkillScan.</p>
+                    </dd>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-gray-900 text-gray-400 pt-16 pb-6">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+                <!-- Company Info -->
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-5">SkillScan</h2>
+                    <p class="leading-relaxed mb-6">
+                        AI-powered resume analysis and smart career roadmap guidance to help students and professionals
+                        grow faster.
+                    </p>
+                    <div class="flex space-x-3">
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 flex items-center justify-center rounded-full hover:bg-indigo-600 transition">
+                            <i class="fab fa-facebook-f text-white text-sm"></i>
+                        </a>
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 flex items-center justify-center rounded-full hover:bg-indigo-600 transition">
+                            <i class="fab fa-instagram text-white text-sm"></i>
+                        </a>
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 flex items-center justify-center rounded-full hover:bg-indigo-600 transition">
+                            <i class="fab fa-twitter text-white text-sm"></i>
+                        </a>
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 flex items-center justify-center rounded-full hover:bg-indigo-600 transition">
+                            <i class="fab fa-linkedin-in text-white text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Our Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-5 text-white">Our Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="hover:text-indigo-400 transition">Home</a></li>
+                        <li><a href="aboutus.html" class="hover:text-indigo-400 transition">About Us</a></li>
+                        <li><a href="pricing.html" class="hover:text-indigo-400 transition">Pricing</a></li>
+                        <li><a href="how_it_works.html" class="hover:text-indigo-400 transition">How It Works</a></li>
+                        <li><a href="contactus.html" class="hover:text-indigo-400 transition">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Our Services -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-5 text-white">Our Services</h3>
+                    <ul class="space-y-3">
+                        <li><a class="hover:text-indigo-400 transition">Resume Analysis</a></li>
+                        <li><a class="hover:text-indigo-400 transition">Career Roadmap</a></li>
+                        <li><a class="hover:text-indigo-400 transition">Skill Gap Detection</a></li>
+                        <li><a class="hover:text-indigo-400 transition">AI Suggestions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Us -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-5 text-white">Contact Us</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-phone mt-1 text-indigo-400"></i>
+                            <div>
+                                <p>+91 98765 43210</p>
+                                <p>+91 91234 56789</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-envelope mt-1 text-indigo-400"></i>
+                            <div>
+                                <p>info@skillscan.com</p>
+                                <p>support@skillscan.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-location-dot mt-1 text-indigo-400"></i>
+                            <p>Vadodara, Gujarat, India</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-800 mt-12 pt-6 text-center text-gray-500 text-sm">
+                © 2026 <span class="text-white font-semibold">SkillScan</span>. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Go to top button -->
+    <button id="goTopBtn"
+        class="fixed bottom-6 right-6 bg-white border border-gray-200 text-indigo-600 w-11 h-11 rounded-xl shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 hover:bg-indigo-50 hover:border-indigo-300">
+        <i class="fa-solid fa-arrow-up text-sm"></i>
+    </button>
+
+</body>
+<script src="script.js"></script>
+
+</html>

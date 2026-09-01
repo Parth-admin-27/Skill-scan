@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <title>SkillScan - AI Resume Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="output.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="p-3 flex bg-white justify-between items-center fixed top-0 left-0 right-0 z-20 shadow-md">
+        <a href="index.html" id="brand" class="flex gap-2 items-center flex-1">
+            <img class="object-cover max-w-12 max-h-12" src="./assets/asset 0.png" alt="Logo">
+            <span class="text-lg font-semibold font-display">SkillScan</span>
+        </a>
+        <div id="nav-menu" class="hidden lg:flex gap-12">
+            <a href="find_roadmap.html" class="font-medium hover:text-primary">Find Roadmap</a>
+            <a href="aboutus.html" class="font-medium hover:text-primary">About Us</a>
+            <a href="how_it_works.html" class="font-medium hover:text-primary">How It Works</a>
+            <a href="pricing.html" class="font-medium hover:text-primary">Pricing</a>
+            <a href="contactus.html" class="font-medium hover:text-primary">Contact Us</a>
+            <a href="faqs.html" class="font-medium text-primary">FAQs</a>
+        </div>
+        <div class="hidden lg:flex flex-1 justify-end">
+            <a href="signup.html">
+            <button class="flex gap-2 items-center border border-gray-400 px-6 py-2 rounded-lg hover:border-gray-600">
+                <img src="./assets/asset 1.svg" alt="">
+                <span class="font-display font-medium">Login / Sign up</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            </a>
+        </div>
+
+
+        <button class="p-2 lg:hidden" onclick="handleMenu()">
+            <i class="fa-solid fa-bars text-gray-600"></i>
+        </button>
+
+        <div id="nav-dialog" class="hidden fixed z-10 md:hidden bg-white inset-0 p-3">
+            <div id="nav-bar" class="flex justify-between">
+                <a href="index.html" id="brand" class="flex gap-2 items-center">
+                    <img class="object-cover max-w-12 max-h-12" src="./assets/asset 0.png" alt="Logo">
+                    <span class="text-lg font-medium font-display">SkillScan</span>
+                </a>
+                <button class="p-2 md:hidden" onclick="handleMenu()">
+                    <i class="fa-solid fa-xmark text-gray-600"></i>
+                </button>
+            </div>
+            <div class="mt-6">
+                <a href="find_roadmap.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">Find Roadmap</a>
+                <a href="aboutus.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">About Us</a>
+                <a href="how_it_works.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">How It Works</a>
+                <a href="pricing.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">Pricing</a>
+                <a href="contactus.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">Contact Us</a>
+                <a href="faqs.html" class="font-medium m-3 p-3 text-primary rounded-lg">FAQs</a>
+
+            </div>
+            <div class="h-[1px] bg-gray-300"></div>
+            <a href="signup.html">
+            <button class="mt-6 w-full flex gap-2 items-center  px-6 py-4 rounded-lg hover:bg-gray-50">
+                <img src="./assets/asset 1.svg" alt="">
+                <span>Login / Sign up</span>
+            </button>
+            </a>
+        </div>
+
+    </nav>
+
+           <!-- FAQs -->
+        <div id="faq" class="container">
+            <h2 class="h2-style">FAQs</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 mt-6 gap-6 items-start">
+                <div class="group rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="cursor-pointer flex justify-between items-center" aria-controls="faq-1">
+                        <p class="font-semibold text-lg">What is SkillScan and how does it work?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-1" class="hidden text-lg font-light mt-6">
+                        <p>SkillScan is an AI-powered resume analyzer that evaluates your resume, extracts key skills,
+                            checks ATS compatibility, and provides personalized career improvement suggestions. Simply
+                            upload your resume, and the system generates a detailed analysis report within seconds.</p>
+                    </dd>
+                </div>
+                <div class="group cursor-pointer rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="flex justify-between items-center" aria-controls="faq-2">
+                        <p class="font-semibold text-lg">Is SkillScan free to use?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-2" class="hidden text-lg font-light mt-6">
+                        <p>Yes. SkillScan offers a free version that allows users to upload their resume and receive
+                            basic skill analysis and improvement suggestions. Advanced features may be included in
+                            future premium plans.</p>
+                    </dd>
+                </div>
+                <div class="group rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="cursor-pointer flex justify-between items-center" aria-controls="faq-3">
+                        <p class="font-semibold text-lg">What file formats are supported?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-3" class="hidden text-lg font-light mt-6">
+                        <p>SkillScan currently supports:
+
+                            PDF (.pdf)
+
+                            Word Documents (.docx)
+
+                            More formats may be added in future updates.</p>
+                    </dd>
+                </div>
+                <div class="group cursor-pointer rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="flex justify-between items-center" aria-controls="faq-4">
+                        <p class="font-semibold text-lg">How accurate is the AI analysis?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-4" class="hidden text-lg font-light mt-6">
+                        <p>SkillScan uses intelligent text extraction and natural language processing techniques to
+                            identify skills, keywords, and experience. While it provides strong insights, users should
+                            review suggestions carefully before making final resume changes.</p>
+                    </dd>
+                </div>
+                <div class="group rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="cursor-pointer flex justify-between items-center" aria-controls="faq-5">
+                        <p class="font-semibold text-lg">Can SkillScan guarantee I will get a job?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-5" class="hidden text-lg font-light mt-6">
+                        <p> No tool can guarantee a job. However, SkillScan helps optimize your resume, identify skill
+                            gaps, and improve ATS compatibility — significantly increasing your chances of landing
+                            interviews.</p>
+                    </dd>
+                </div>
+                <div class="group cursor-pointer rounded-xl border border-gray-200 bg-gray-50 p-6">
+                    <dt class="flex justify-between items-center" aria-controls="faq-6">
+                        <p class="font-semibold text-lg">Is my resume data secure?</p>
+                        <i class="fa-solid fa-chevron-up -rotate-180 transition-transform"></i>
+                    </dt>
+                    <dd id="faq-6" class="hidden text-lg font-light mt-6">
+                        <p>Yes. Your resume is processed securely and is not shared with third parties. User privacy and
+                            data protection are a top priority for SkillScan.</p>
+                    </dd>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+<footer class="bg-slate-900 text-gray-300 pt-16 pb-6">
+  
+  <div class="max-w-7xl mx-auto px-6">
+    
+    <!-- Grid Container -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+      <!-- Company Info -->
+      <div>
+        <h2 class="text-2xl font-bold text-white mb-5">SkillScan</h2>
+        <p class="text-gray-400 leading-relaxed mb-6">
+          AI-powered resume analysis and smart career roadmap guidance 
+          to help students and professionals grow faster.
+        </p>
+
+        <!-- Social Icons -->
+        <div class="flex space-x-4">
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-facebook-f text-white text-sm"></i>
+          </a>
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-instagram text-white text-sm"></i>
+          </a>
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-twitter text-white text-sm"></i>
+          </a>
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-linkedin-in text-white text-sm"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Our Links -->
+      <div>
+        <h3 class="text-lg font-semibold mb-5 text-white">Our Links</h3>
+        <ul class="space-y-3 text-gray-400">
+          <li><a href="index.html" class="hover:text-orange-500 transition">Home</a></li>
+          <li><a href="aboutus.html" class="hover:text-orange-500 transition">About Us</a></li>
+          <li><a href="pricing.html" class="hover:text-orange-500 transition">Pricing</a></li>
+          <li><a href="how_it_works.html" class="hover:text-orange-500 transition">How It Works</a></li>
+          <li><a href="contactus.html" class="hover:text-orange-500 transition">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Our Services -->
+      <div>
+        <h3 class="text-lg font-semibold mb-5 text-white">Our Services</h3>
+        <ul class="space-y-3 text-gray-400">
+          <li><a  class="hover:text-orange-500 transition">Resume Analysis</a></li>
+          <li><a  class="hover:text-orange-500 transition">Career Roadmap</a></li>
+          <li><a  class="hover:text-orange-500text-blue-400 transition">Skill Gap Detection</a></li>
+          <li><a  class="hover:text-orange-500 transition">AI Suggestions</a></li>
+          
+        </ul>
+      </div>
+
+      
+
+      <!-- Contact Us -->
+      <div>
+        <h3 class="text-lg font-semibold mb-5 text-white">Contact Us</h3>
+
+        <div class="space-y-4 text-gray-400">
+
+          <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-phone text-white-500 mt-1"></i>
+            <div>
+              <p>+91 98765 43210</p>
+              <p>+91 91234 56789</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-envelope text-white-500 mt-1"></i>
+            <div>
+              <p>info@skillscan.com</p>
+              <p>support@skillscan.com</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-location-dot text-white-500 mt-1"></i>
+            <div>
+              <p>Vadodara, Gujarat, India</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="border-t border-slate-700 mt-12 pt-6 text-center text-gray-500 text-sm">
+      © 2026 <span class="text-white font-semibold">SkillScan</span>. All Rights Reserved.
+    </div>
+
+  </div>
+
+</footer>
+
+
+
+</body>
+
+<button id="goTopBtn"
+class="fixed bottom-6 right-6 w-12 h-12 bg-white border border-gray-300 text-slate-800 rounded-lg shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 hover:bg-gray-100">
+
+<i class="fa-solid fa-arrow-up"></i>
+
+</button>
+
+<script>
+
+const goTopBtn = document.getElementById("goTopBtn");
+
+window.addEventListener("scroll", () => {
+
+  if (window.scrollY > 200) {
+    goTopBtn.classList.remove("opacity-0","pointer-events-none");
+  } else {
+    goTopBtn.classList.add("opacity-0","pointer-events-none");
+  }
+
+});
+
+goTopBtn.addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
+
+</script>
+<script>
+    // Mobile Menu Toggle
+    function handleMenu() {
+        const dialog = document.getElementById("nav-dialog");
+        dialog.classList.toggle("hidden");
+    }
+
+    // FAQ Toggle Functionality
+    document.querySelectorAll("#faq dt").forEach((question) => {
+        question.addEventListener("click", () => {
+            const answer = question.parentElement.querySelector("dd");
+            const icon = question.querySelector("i");
+
+            // Close other open FAQs (optional - accordion style)
+            document.querySelectorAll("#faq dd").forEach((item) => {
+                if (item !== answer) {
+                    item.classList.add("hidden");
+                }
+            });
+
+            document.querySelectorAll("#faq dt i").forEach((arrow) => {
+                if (arrow !== icon) {
+                    arrow.classList.add("-rotate-180");
+                }
+            });
+
+            // Toggle current
+            answer.classList.toggle("hidden");
+            icon.classList.toggle("-rotate-180");
+        });
+    });
+</script>
+
+
+</html>

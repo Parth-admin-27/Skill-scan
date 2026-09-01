@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <title>SkillScan - AI Resume Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="output.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="p-3 flex bg-white justify-between items-center fixed top-0 left-0 right-0 z-20 shadow-md">
+        <a href="index.html" id="brand" class="flex gap-2 items-center flex-1">
+            <img class="object-cover max-w-12 max-h-12" src="./assets/asset 0.png" alt="Logo">
+            <span class="text-lg font-semibold font-display">SkillScan</span>
+        </a>
+        <div id="nav-menu" class="hidden lg:flex gap-12">
+            <a href="find_roadmap.html" class="font-medium hover:text-primary">Find Roadmap</a>
+            <a href="aboutus.html" class="font-medium hover:text-primary">About Us</a>
+            <a href="how_it_works.html" class="font-medium hover:text-primary">How It Works</a>
+            <a href="pricing.html" class="font-medium hover:text-primary">Pricing</a>
+            <a href="contactus.html" class="font-medium text-primary">Contact Us</a>
+            <a href="faqs.html" class="font-medium hover:text-primary">FAQs</a>
+        </div>
+        <div class="hidden lg:flex flex-1 justify-end">
+            <a href="signup.html">
+            <button class="flex gap-2 items-center border border-gray-400 px-6 py-2 rounded-lg hover:border-gray-600">
+                <img src="./assets/asset 1.svg" alt="">
+                <span class="font-display font-medium">Login / Sign up</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            </a>
+        </div>
+
+
+        <button class="p-2 lg:hidden" onclick="handleMenu()">
+            <i class="fa-solid fa-bars text-gray-600"></i>
+        </button>
+
+        <div id="nav-dialog" class="hidden fixed z-10 md:hidden bg-white inset-0 p-3">
+            <div id="nav-bar" class="flex justify-between">
+                <a href="index.html" id="brand" class="flex gap-2 items-center">
+                    <img class="object-cover max-w-12 max-h-12" src="./assets/asset 0.png" alt="Logo">
+                    <span class="text-lg font-medium font-display">SkillScan</span>
+                </a>
+                <button class="p-2 md:hidden" onclick="handleMenu()">
+                    <i class="fa-solid fa-xmark text-gray-600"></i>
+                </button>
+            </div>
+            <div class="mt-6">
+                <a href="find_roadmap.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">Find Roadmap</a>
+                <a href="aboutus.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">About Us</a>
+                <a href="how_it_works.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">How It Works</a>
+                <a href="pricing.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">Pricing</a>
+                <a href="contactus.html" class="font-medium m-3 p-3 text-primary rounded-lg">Contact Us</a>
+                <a href="faqs.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">FAQs</a>
+
+            </div>
+            <div class="h-[1px] bg-gray-300"></div>
+            <a href="signup.html">
+            <button class="mt-6 w-full flex gap-2 items-center  px-6 py-4 rounded-lg hover:bg-gray-50">
+                <img src="./assets/asset 1.svg" alt="">
+                <span>Login / Sign up</span>
+            </button>
+            </a>
+        </div>
+
+    </nav>
+
+
+
+    <!-- Contact Us Section -->
+<section class="bg-gray-50 py-24">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <!-- Heading -->
+    <div class="text-center mb-20">
+      <h1 class="text-5xl font-bold text-slate-900 mb-6">
+        Get in Touch
+      </h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        Have questions about SkillScan? Need support or collaboration?
+        We would love to hear from you. Fill out the form and our team will respond shortly.
+      </p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-gray-50   p-12 lg:p-16">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+        <!-- Left Side - Contact Info -->
+        <div class="space-y-12">
+
+          <div class="flex items-start space-x-6">
+            <div class="w-14 h-14 bg-blue-600 text-white flex items-center justify-center rounded-2xl shadow-md">
+              <i class="fa-solid fa-phone text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-2">Call Us</h3>
+              <p class="text-gray-600">+91 98765 43210</p>
+              <p class="text-gray-600">+91 91234 56789</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-6">
+            <div class="w-14 h-14 bg-blue-600 text-white flex items-center justify-center rounded-2xl shadow-md">
+              <i class="fa-solid fa-envelope text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-2">Email Address</h3>
+              <p class="text-gray-600">info@skillscan.com</p>
+              <p class="text-gray-600">support@skillscan.com</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-6">
+            <div class="w-14 h-14 bg-blue-600 text-white flex items-center justify-center rounded-2xl shadow-md">
+              <i class="fa-solid fa-location-dot text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900 mb-2">Our Location</h3>
+              <p class="text-gray-600">Vadodara, Gujarat, India</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side - Form -->
+        <div>
+
+          <form class="space-y-8">
+
+            <!-- Name & Email Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">
+                  Full Name
+                </label>
+<input type="text" placeholder="Enter your name"
+                  class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">
+                  Email Address
+                </label>
+                <input type="email" placeholder="Enter your email"
+                  class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+              </div>
+            </div>
+
+            <!-- Subject -->
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">
+                Subject
+              </label>
+<input type="text" placeholder="Enter subject"
+                class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+
+            <!-- Message -->
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">
+                Message
+              </label>
+              <textarea rows="6" placeholder="Write your message..."
+                class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            </div>
+
+            <!-- Button -->
+            <button type="submit"
+              class="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-blue-700 transition duration-300 shadow-md">
+              Send Message
+            </button>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+    <!-- Footer -->
+<footer class="bg-slate-900 text-gray-300 pt-16 pb-6">
+  
+  <div class="max-w-7xl mx-auto px-6">
+    
+    <!-- Grid Container -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+      <!-- Company Info -->
+      <div>
+        <h2 class="text-2xl font-bold text-white mb-5">SkillScan</h2>
+        <p class="text-gray-400 leading-relaxed mb-6">
+          AI-powered resume analysis and smart career roadmap guidance 
+          to help students and professionals grow faster.
+        </p>
+
+        <!-- Social Icons -->
+        <div class="flex space-x-4">
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-facebook-f text-white text-sm"></i>
+          </a>
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-instagram text-white text-sm"></i>
+          </a>
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-twitter text-white text-sm"></i>
+          </a>
+          <a href="#" class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+            <i class="fab fa-linkedin-in text-white text-sm"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Our Links -->
+      <div>
+        <h3 class="text-lg font-semibold mb-5 text-white">Our Links</h3>
+        <ul class="space-y-3 text-gray-400">
+          <li><a href="index.html" class="hover:text-orange-500 transition">Home</a></li>
+          <li><a href="aboutus.html" class="hover:text-orange-500 transition">About Us</a></li>
+          <li><a href="pricing.html" class="hover:text-orange-500 transition">Pricing</a></li>
+          <li><a href="how_it_works.html" class="hover:text-orange-500 transition">How It Works</a></li>
+          <li><a href="contactus.html" class="hover:text-orange-500 transition">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Our Services -->
+     <div>
+        <h3 class="text-lg font-semibold mb-5 text-white">Our Services</h3>
+        <ul class="space-y-3 text-gray-400">
+          <li><a  class="hover:text-orange-500 transition">Resume Analysis</a></li>
+          <li><a  class="hover:text-orange-500 transition">Career Roadmap</a></li>
+          <li><a  class="hover:text-orange-500text-blue-400 transition">Skill Gap Detection</a></li>
+          <li><a  class="hover:text-orange-500 transition">AI Suggestions</a></li>
+          
+        </ul>
+      </div>
+
+      
+
+      <!-- Contact Us -->
+      <div>
+        <h3 class="text-lg font-semibold mb-5 text-white">Contact Us</h3>
+
+        <div class="space-y-4 text-gray-400">
+
+          <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-phone text-white-500 mt-1"></i>
+            <div>
+              <p>+91 98765 43210</p>
+              <p>+91 91234 56789</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-envelope text-white-500 mt-1"></i>
+            <div>
+              <p>info@skillscan.com</p>
+              <p>support@skillscan.com</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-location-dot text-white-500 mt-1"></i>
+            <div>
+              <p>Vadodara, Gujarat, India</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="border-t border-slate-700 mt-12 pt-6 text-center text-gray-500 text-sm">
+      © 2026 <span class="text-white font-semibold">SkillScan</span>. All Rights Reserved.
+    </div>
+
+  </div>
+
+</footer>
+
+<button id="goTopBtn"
+class="fixed bottom-6 right-6 w-12 h-12 bg-white border border-gray-300 text-slate-800 rounded-lg shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 hover:bg-gray-100">
+
+<i class="fa-solid fa-arrow-up"></i>
+
+</button>
+
+<script src="script.js"></script>
+
+
+
+    </body>
+    </html>
+    

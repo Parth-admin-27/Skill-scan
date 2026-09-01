@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "http-server \"Resume Analyzer\" -p 5500"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^24.39.0"
+  }
+}

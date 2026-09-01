@@ -1,0 +1,94 @@
+{
+  "Software Developer": {
+    "title": "Software Developer",
+    "description": "Build full-stack applications, learn architecture, and collaborate with product teams.",
+    "steps": [
+      {
+        "title": "Foundation Skills",
+        "description": "Learn programming fundamentals (variables, control flow, data structures), Git, and basic problem-solving.",
+        "level": "Beginner",
+        "duration": "2-3 Months",
+        "tags": ["Programming", "Git", "Algorithms"],
+        "icon": "fa-code"
+      },
+      {
+        "title": "Core Technologies",
+        "description": "Master a modern frontend framework (React/Vue/Angular), backend (Node.js/Express), and databases (SQL/NoSQL).",
+        "level": "Intermediate",
+        "duration": "3-4 Months",
+        "tags": ["Frontend", "Backend", "Databases"],
+        "icon": "fa-laptop-code"
+      },
+      {
+        "title": "Advanced Concepts",
+        "description": "Learn testing, performance optimization, deployment, and system design for scalable apps.",
+        "level": "Advanced",
+        "duration": "4-5 Months",
+        "tags": ["Testing", "DevOps", "Architecture"],
+        "icon": "fa-layer-group"
+      },
+      {
+        "title": "Practical Experience",
+        "description": "Build real projects, contribute to open source, and solve real-world problems to strengthen your portfolio.",
+        "level": "Expert",
+        "duration": "3-6 Months",
+        "tags": ["Projects", "Open Source", "Collaboration"],
+        "icon": "fa-briefcase"
+      },
+      {
+        "title": "Career Launch",
+        "description": "Prepare your resume, profile, and interview skills to land your first (or next) developer role.",
+        "level": "Ready",
+        "duration": "1-2 Months",
+        "tags": ["Resume", "Interview", "Networking"],
+        "icon": "fa-rocket"
+      }
+    ]
+  },
+  "Data Scientist": {
+    "title": "Data Scientist",
+    "description": "Extract insights from data, build models, and communicate results to stakeholders.",
+    "steps": [
+      {
+        "title": "Statistics & Python",
+        "description": "Learn statistics, probability, Python programming, and libraries like pandas and numpy.",
+        "level": "Beginner",
+        "duration": "2-3 Months",
+        "tags": ["Statistics", "Python", "Data Manipulation"],
+        "icon": "fa-chart-line"
+      },
+      {
+        "title": "Machine Learning Basics",
+        "description": "Understand supervised and unsupervised learning, and implement models with scikit-learn.",
+        "level": "Intermediate",
+        "duration": "3-4 Months",
+        "tags": ["ML", "scikit-learn", "Modeling"],
+        "icon": "fa-brain"
+      },
+      {
+        "title": "Advanced Modeling",
+        "description": "Explore deep learning, time series, and model evaluation techniques.",
+        "level": "Advanced",
+        "duration": "4-5 Months",
+        "tags": ["Deep Learning", "Time Series", "Evaluation"],
+        "icon": "fa-robot"
+      },
+      {
+        "title": "Real-World Projects",
+        "description": "Build end-to-end projects, deploy models, and work with large datasets.",
+        "level": "Expert",
+        "duration": "3-6 Months",
+        "tags": ["Deployment", "Big Data", "Projects"],
+        "icon": "fa-project-diagram"
+      },
+      {
+        "title": "Job Preparation",
+        "description": "Polish your portfolio, craft case studies, and practice interviews for data science roles.",
+        "level": "Ready",
+        "duration": "1-2 Months",
+        "tags": ["Portfolio", "Interview", "Networking"],
+        "icon": "fa-user-tie"
+      }
+    ]
+  }
+}

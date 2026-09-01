@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze Resume - SkillScan</title>
+    <meta name="description" content="Upload your resume and get AI-powered analysis with ATS score, skill gap detection, and career roadmap.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="output.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'primary': '#4f46e5' },
+                    fontFamily: {
+                        'display': ['Poppins', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .upload-zone {
+            border: 2px dashed #c7d2fe;
+            background: #f5f3ff;
+            transition: all 0.3s;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #4f46e5;
+            background: #ede9fe;
+        }
+        .upload-zone.has-file {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .score-ring {
+            width: 140px;
+            height: 140px;
+        }
+        .score-ring circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+        }
+        .score-ring .bg { stroke: #e5e7eb; }
+        .score-ring .fg {
+            stroke: #4f46e5;
+            stroke-dasharray: 408;
+            stroke-dashoffset: 408;
+            transition: stroke-dashoffset 1.5s ease;
+            transform: rotate(-90deg);
+            transform-origin: center;
+        }
+        .score-ring.good .fg { stroke: #22c55e; }
+        .score-ring.medium .fg { stroke: #f59e0b; }
+        .score-ring.low .fg { stroke: #ef4444; }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body class="bg-white font-body">
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="nav-glass p-4 flex justify-between items-center fixed top-0 left-0 right-0 z-20 border-b border-gray-100">
+        <a href="index.html" class="flex gap-2 items-center flex-1">
+            <img class="object-cover max-w-10 max-h-10" src="./assets/asset 0.png" alt="SkillScan Logo">
+            <span class="text-xl font-semibold font-display text-indigo-600">SkillScan</span>
+        </a>
+        <div class="hidden lg:flex gap-10">
+            <a href="find_roadmap.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">Find Roadmap</a>
+            <a href="aboutus.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">About Us</a>
+            <a href="how_it_works.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">How It Works</a>
+            <a href="pricing.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">Pricing</a>
+            <a href="contactus.html" class="text-gray-600 font-medium hover:text-indigo-600 transition">Contact Us</a>
+        </div>
+        <div class="hidden lg:flex flex-1 justify-end">
+            <a href="signup.html">
+                <button class="btn-outline flex gap-2 items-center text-sm py-2 px-5">
+                    <i class="fa-solid fa-user text-indigo-500"></i>
+                    <span class="font-display font-medium">Login / Sign up</span>
+                </button>
+            </a>
+        </div>
+        <button class="p-2 lg:hidden" onclick="handleMenu()">
+            <i class="fa-solid fa-bars text-gray-600 text-xl"></i>
+        </button>
+        <div id="nav-dialog" class="hidden fixed z-10 md:hidden bg-white inset-0 p-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex gap-2 items-center">
+                    <img class="object-cover max-w-10 max-h-10" src="./assets/asset 0.png" alt="Logo">
+                    <span class="text-xl font-semibold font-display text-indigo-600">SkillScan</span>
+                </a>
+                <button class="p-2" onclick="handleMenu()"><i class="fa-solid fa-xmark text-gray-600 text-xl"></i></button>
+            </div>
+            <div class="mt-8 flex flex-col gap-1">
+                <a href="find_roadmap.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg">Find Roadmap</a>
+                <a href="aboutus.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg">About Us</a>
+                <a href="how_it_works.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg">How It Works</a>
+                <a href="pricing.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg">Pricing</a>
+                <a href="contactus.html" class="font-medium p-3 hover:bg-indigo-50 rounded-lg">Contact Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN ========== -->
+    <main class="pt-24 pb-16">
+        <div class="max-w-4xl mx-auto px-6">
+
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">
+                    Resume Analysis by <span class="text-indigo-600">SkillScan</span>
+                </h1>
+                <p class="mt-3 text-gray-500 text-lg">Upload your resume and get AI-powered insights in seconds</p>
+            </div>
+
+            <!-- ===== UPLOAD SECTION ===== -->
+            <div id="upload-section" class="bg-white border border-gray-200 rounded-2xl p-8 sm:p-10 shadow-sm mb-10">
+                <div class="text-center">
+                    <input type="file" id="resume-file" accept=".pdf,.txt,.docx" class="hidden">
+
+                    <!-- Drop zone -->
+                    <label for="resume-file" id="drop-zone" class="upload-zone cursor-pointer block rounded-2xl p-10 sm:p-14 mx-auto max-w-lg">
+                        <div id="upload-icon" class="text-5xl mb-4">
+                            <i class="fa-solid fa-cloud-arrow-up text-indigo-400"></i>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-700" id="file-label">Drag & drop or click to upload</p>
+                        <p class="text-sm text-gray-400 mt-2">Supports PDF, DOCX, TXT (max 5 MB)</p>
+                    </label>
+
+                    <!-- File info bar (hidden until file selected) -->
+                    <div id="file-info" class="hidden mt-5 inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-3">
+                        <i class="fa-solid fa-file-check text-green-500"></i>
+                        <span id="file-name" class="text-sm font-medium text-green-700"></span>
+                        <button onclick="clearFile()" class="text-gray-400 hover:text-red-500 ml-2"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <!-- Analyze button -->
+                    <div class="mt-8">
+                        <button id="analyze-btn" onclick="analyzeResume()" class="btn-primary text-lg px-10 py-3.5 flex items-center gap-3 mx-auto">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            Analyze Resume
+                        </button>
+                    </div>
+
+                    <!-- Error message -->
+                    <p id="upload-error" class="text-red-500 text-sm mt-4 hidden"></p>
+                </div>
+                
+                <!-- Job Description Input -->
+                <div class="mt-8 border-t border-gray-100 pt-8">
+                    <label for="job-desc" class="block text-sm font-semibold text-gray-700 mb-2">Job Description (Optional)</label>
+                    <p class="text-xs text-gray-500 mb-3">Paste the job description you are applying for to get tailored ATS scoring and skill gap detection.</p>
+                    <textarea id="job-desc" rows="4" class="w-full rounded-xl border-gray-200 border p-4 text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="e.g. We are looking for a Senior Frontend Developer with 5+ years of React experience..."></textarea>
+                </div>
+            </div>
+
+            <!-- ===== LOADING STATE ===== -->
+            <div id="loading" class="hidden">
+                <div class="bg-white border border-gray-200 rounded-2xl p-10 shadow-sm text-center">
+                    <div class="inline-block w-14 h-14 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-5"></div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Analyzing Your Resume...</h3>
+                    <p class="text-gray-500">Our AI is reading your resume, detecting skills, and calculating your ATS score.</p>
+                    <div class="mt-6 max-w-sm mx-auto space-y-3">
+                        <div class="flex items-center gap-3 text-sm text-gray-500">
+                            <i class="fa-solid fa-check-circle text-green-400" id="step-parse"></i>
+                            <span>Parsing document</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-400">
+                            <i class="fa-solid fa-circle-notch fa-spin text-indigo-400" id="step-analyze-icon"></i>
+                            <span>AI analysis in progress</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-400">
+                            <i class="fa-regular fa-circle text-gray-300" id="step-report-icon"></i>
+                            <span>Generating report</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== REPORT SECTION ===== -->
+            <div id="report" class="hidden space-y-8">
+
+                <!-- Score Card -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-gauge-high text-indigo-500"></i> Resume Score
+                    </h2>
+                    <div class="flex flex-col sm:flex-row items-center gap-8">
+                        <div class="flex-shrink-0">
+                            <svg class="score-ring" viewBox="0 0 140 140" id="score-svg">
+                                <circle class="bg" cx="70" cy="70" r="65"/>
+                                <circle class="fg" cx="70" cy="70" r="65" id="score-circle"/>
+                            </svg>
+                            <p id="score-text" class="text-center text-3xl font-bold text-gray-900 -mt-24 mb-14"></p>
+                        </div>
+                        <div class="flex-1">
+                            <p id="score-label" class="text-lg font-semibold text-gray-700 mb-3"></p>
+                            <p id="target-role" class="text-sm text-gray-500 mb-4"></p>
+                            <div class="flex gap-2 flex-wrap">
+                                <span class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-medium">AI Analyzed</span>
+                                <span class="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full font-medium">ATS Compatible</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strengths & Improvements -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-green-500"></i> Strengths
+                        </h3>
+                        <ul id="strengths" class="space-y-3"></ul>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Areas to Improve
+                        </h3>
+                        <ul id="improvements" class="space-y-3"></ul>
+                    </div>
+                </div>
+
+                <!-- Skill Gap -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-puzzle-piece text-violet-500"></i> Skill Gap Detection
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">Your Current Skills</h4>
+                            <div id="current-skills" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide" id="missing-skills-title">Missing Skills</h4>
+                            <div id="missing-skills" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Roadmap -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-road text-blue-500"></i> Suggested Career Roadmap
+                    </h2>
+                    <div id="roadmap" class="space-y-4"></div>
+                </div>
+
+                <!-- AI Suggestions -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i> AI Suggestions
+                    </h2>
+                    <div id="ai-suggestions" class="space-y-3"></div>
+                </div>
+
+                <!-- CTA -->
+                <div class="text-center pt-4">
+                    <button onclick="resetAnalysis()" class="btn-primary text-lg px-10 py-3.5 flex items-center gap-3 mx-auto">
+                        <i class="fa-solid fa-arrow-rotate-left"></i>
+                        Analyze Another Resume
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p>© 2026 <span class="text-white font-semibold">SkillScan</span>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const API_URL = 'http://localhost:3000/api/resume';
+        const fileInput = document.getElementById('resume-file');
+        const fileLabel = document.getElementById('file-label');
+        const dropZone = document.getElementById('drop-zone');
+        const fileInfo = document.getElementById('file-info');
+        const fileName = document.getElementById('file-name');
+        const uploadIcon = document.getElementById('upload-icon');
+
+        // File selection
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) {
+                showFileSelected(fileInput.files[0]);
+            }
+        });
+
+        // Drag & drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                fileInput.files = dt.files;
+                showFileSelected(file);
+            }
+        });
+
+        function showFileSelected(file) {
+            dropZone.classList.add('has-file');
+            uploadIcon.innerHTML = '<i class="fa-solid fa-file-circle-check text-green-400"></i>';
+            fileLabel.textContent = 'File selected!';
+            fileInfo.classList.remove('hidden');
+            fileName.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        }
+
+        function clearFile() {
+            fileInput.value = '';
+            dropZone.classList.remove('has-file');
+            uploadIcon.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-indigo-400"></i>';
+            fileLabel.textContent = 'Drag & drop or click to upload';
+            fileInfo.classList.add('hidden');
+        }
+
+        function resetAnalysis() {
+            clearFile();
+            document.getElementById('report').classList.add('hidden');
+            document.getElementById('upload-section').classList.remove('hidden');
+            document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function analyzeResume() {
+            const token = localStorage.getItem('skillscan_token');
+            const errEl = document.getElementById('upload-error');
+            errEl.classList.add('hidden');
+
+            if (!token) {
+                errEl.innerHTML = "You must <a href='login.html' class='underline text-indigo-600 font-semibold'>Login</a> to analyze resumes. <a href='signup.html' class='underline text-indigo-600'>Register here</a> if you don't have an account.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            const file = fileInput.files[0];
+
+            if (!file) {
+                errEl.textContent = 'Please select a resume file first.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            // Show loading, hide upload
+            document.getElementById('upload-section').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('report').classList.add('hidden');
+
+            const formData = new FormData();
+            formData.append('resume', file);
+            
+            const jd = document.getElementById('job-desc').value.trim();
+            if (jd) {
+                formData.append('jobDescription', jd);
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Analysis failed');
+                renderReport(data);
+            } catch (err) {
+                document.getElementById('upload-section').classList.remove('hidden');
+                errEl.textContent = '❌ ' + err.message;
+                errEl.classList.remove('hidden');
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        function renderReport(data) {
+            // Score ring
+            const score = data.overallScore || 0;
+            const circle = document.getElementById('score-circle');
+            const svg = document.getElementById('score-svg');
+            const circumference = 2 * Math.PI * 65; // r=65
+            const offset = circumference - (score / 100) * circumference;
+
+            svg.classList.remove('good', 'medium', 'low');
+            if (score >= 70) svg.classList.add('good');
+            else if (score >= 40) svg.classList.add('medium');
+            else svg.classList.add('low');
+
+            setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
+
+            document.getElementById('score-text').textContent = score + '%';
+            document.getElementById('score-label').textContent = data.scoreLabel || 'Score calculated';
+            document.getElementById('target-role').textContent = data.targetRole
+                ? 'Detected Target Role: ' + data.targetRole
+                : '';
+
+            // Strengths
+            document.getElementById('strengths').innerHTML = (data.strengths || []).map(s =>
+                `<li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fa-solid fa-check text-green-400 mt-0.5 flex-shrink-0"></i>
+                    <span>${s}</span>
+                </li>`
+            ).join('');
+
+            // Improvements
+            document.getElementById('improvements').innerHTML = (data.improvements || []).map(s =>
+                `<li class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fa-solid fa-arrow-up text-amber-400 mt-0.5 flex-shrink-0"></i>
+                    <span>${s}</span>
+                </li>`
+            ).join('');
+
+            // Current Skills
+            document.getElementById('current-skills').innerHTML = (data.currentSkills || []).map(s =>
+                `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">${s}</span>`
+            ).join('');
+
+            // Missing Skills
+            document.getElementById('missing-skills-title').textContent =
+                data.targetRole ? `Missing Skills for ${data.targetRole}` : 'Missing Skills';
+            document.getElementById('missing-skills').innerHTML = (data.missingSkills || []).map(s =>
+                `<span class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-sm font-medium">${s}</span>`
+            ).join('');
+
+            // Roadmap
+            document.getElementById('roadmap').innerHTML = (data.roadmap || []).map(r =>
+                `<div class="flex gap-4 items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="w-9 h-9 min-w-[36px] bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${r.step}</div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">${r.title}</h4>
+                        <p class="text-sm text-gray-500 mt-1">${r.description}</p>
+                    </div>
+                </div>`
+            ).join('');
+
+            // AI Suggestions
+            document.getElementById('ai-suggestions').innerHTML = (data.aiSuggestions || []).map(s =>
+                `<div class="flex items-start gap-3 p-3 bg-purple-50 rounded-xl">
+                    <i class="fa-solid fa-lightbulb text-purple-400 mt-0.5"></i>
+                    <span class="text-sm text-gray-700">${s}</span>
+                </div>`
+            ).join('');
+
+            // Show report
+            document.getElementById('report').classList.remove('hidden');
+            document.getElementById('report').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+  <title>SkillScan - AI Resume Analyzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="output.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="p-3 flex bg-white justify-between items-center fixed top-0 left-0 right-0 z-20 shadow-md">
+    <a href="index.html" id="brand" class="flex gap-2 items-center flex-1">
+      <img class="object-cover max-w-12 max-h-12" src="./assets/asset 0.png" alt="Logo">
+      <span class="text-lg font-semibold font-display">SkillScan</span>
+    </a>
+    <div id="nav-menu" class="hidden lg:flex gap-12">
+      <a href="find_roadmap.html" class="font-medium hover:text-primary">Find Roadmap</a>
+      <a href="aboutus.html" class="font-medium hover:text-primary">About Us</a>
+      <a href="how_it_works.html" class="font-medium hover:text-primary">How It Works</a>
+      <a href="pricing.html" class="font-medium text-primary">Pricing</a>
+      <a href="contactus.html" class="font-medium hover:text-primary">Contact Us</a>
+      <a href="faqs.html" class="font-medium hover:text-primary">FAQs</a>
+    </div>
+    <div class="hidden lg:flex flex-1 justify-end">
+      <a href="signup.html">
+        <button class="flex gap-2 items-center border border-gray-400 px-6 py-2 rounded-lg hover:border-gray-600">
+          <img src="./assets/asset 1.svg" alt="">
+          <span class="font-display font-medium">Login / Sign up</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </a>
+    </div>
+
+
+    <button class="p-2 lg:hidden" onclick="handleMenu()">
+      <i class="fa-solid fa-bars text-gray-600"></i>
+    </button>
+
+    <div id="nav-dialog" class="hidden fixed z-10 md:hidden bg-white inset-0 p-3">
+      <div id="nav-bar" class="flex justify-between">
+        <a href="index.html" id="brand" class="flex gap-2 items-center">
+          <img class="object-cover max-w-12 max-h-12" src="./assets/asset 0.png" alt="Logo">
+          <span class="text-lg font-medium font-display">SkillScan</span>
+        </a>
+        <button class="p-2 md:hidden" onclick="handleMenu()">
+          <i class="fa-solid fa-xmark text-gray-600"></i>
+        </button>
+      </div>
+      <div class="mt-6">
+        <a href="find_roadmap.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">Find Roadmap</a>
+        <a href="aboutus.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">About Us</a>
+        <a href="how_it_works.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">How It Works</a>
+        <a href="pricing.html" class="font-medium m-3 p-3 text-primary rounded-lg">Pricing</a>
+        <a href="contactus.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">Contact Us</a>
+        <a href="faqs.html" class="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg">FAQs</a>
+
+      </div>
+      <div class="h-[1px] bg-gray-300"></div>
+      <a href="signup.html">
+        <button class="mt-6 w-full flex gap-2 items-center  px-6 py-4 rounded-lg hover:bg-gray-50">
+          <img src="./assets/asset 1.svg" alt="">
+          <span>Login / Sign up</span>
+        </button>
+      </a>
+    </div>
+
+  </nav>
+
+  <!-- Pricing -->
+  <div id="pricing" class="container">
+    <h2 class="h2-style">Choose a plan that fits your needs</h2>
+    <div class="flex flex-col lg:flex-row mt-6 gap-6">
+
+      <!-- Free Plan -->
+      <div class="border flex-1 rounded-xl px-8 pt-12 pb-8 flex flex-col gap-6 lg:border-none lg:bg-slate-50">
+        <h3 class="text-4xl">Free</h3>
+        <p class="text-lg font-light">
+          For students and job seekers getting started with resume analysis.
+        </p>
+        <p class="uppercase">Key Features</p>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Resume Upload (PDF/DOCX)</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Basic Skill Extraction</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-xmark text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Advanced ATS Score</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-xmark text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Personalized Career Roadmap</span>
+          </li>
+        </ul>
+        <a href="signup.html"
+          class="border px-8 py-3 text-primary rounded-lg hover:border-gray-800 font-display font-medium inline-flex justify-center items-center text-center">
+          Get Started
+        </a>
+      </div>
+
+      <!-- Essential Plan -->
+      <div class="border flex-1 rounded-xl px-8 pt-12 pb-8 flex flex-col gap-6 lg:border-none lg:bg-slate-50">
+        <h3 class="text-4xl">Essential</h3>
+        <p class="text-lg font-light">For serious candidates improving interview chances.</p>
+        <p class="text-lg font-light"><span class="text-2xl font-semibold">₹299</span>/month</p>
+        <p class="uppercase">Key Features</p>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Everything in Free Plan</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Detailed ATS Compatibility Score</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Resume Improvement Suggestions</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-xmark text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Downloadable PDF Report</span>
+          </li>
+        </ul>
+        <button class="border px-8 py-3 text-primary rounded-lg hover:border-gray-800 font-display font-medium">
+          Upgrade Plan
+        </button>
+      </div>
+
+      <!-- Professional Plan -->
+      <div class="border flex-1 relative rounded-xl px-8 pt-12 pb-8 flex flex-col gap-6 lg:border-none lg:bg-slate-50">
+        <p
+          class="text-blue-800 text-sm bg-indigo-100 rounded-full w-fit px-4 py-2 font-display font-semibold absolute top-0 right-8 -translate-y-1/2">
+          Most Popular</p>
+        <h3 class="text-4xl">Professional</h3>
+        <p class="text-lg font-light">For advanced career growth and full AI insights.</p>
+        <p class="text-lg font-light"><span class="text-2xl font-semibold">₹599</span>/month</p>
+        <p class="uppercase">Key Features</p>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Everything in Essential Plan</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Personalized Career Roadmap</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Downloadable PDF Report</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <i class="fa-solid fa-check text-gray-500"></i>
+            <span class="text-lg font-light text-gray-800">Priority Support</span>
+          </li>
+        </ul>
+        <button class="px-8 py-3 text-white bg-primary rounded-lg hover:bg-opacity-90 font-display font-medium">
+          Go Professional
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-gray-300 pt-16 pb-6">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+      <!-- Grid Container -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <!-- Company Info -->
+        <div>
+          <h2 class="text-2xl font-bold text-white mb-5">SkillScan</h2>
+          <p class="text-gray-400 leading-relaxed mb-6">
+            AI-powered resume analysis and smart career roadmap guidance
+            to help students and professionals grow faster.
+          </p>
+
+          <!-- Social Icons -->
+          <div class="flex space-x-4">
+            <a href="#"
+              class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+              <i class="fab fa-facebook-f text-white text-sm"></i>
+            </a>
+            <a href="#"
+              class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+              <i class="fab fa-instagram text-white text-sm"></i>
+            </a>
+            <a href="#"
+              class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+              <i class="fab fa-twitter text-white text-sm"></i>
+            </a>
+            <a href="#"
+              class="w-9 h-9 bg-slate-700 flex items-center justify-center rounded-full hover:bg-orange-500 transition">
+              <i class="fab fa-linkedin-in text-white text-sm"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Our Links -->
+        <div>
+          <h3 class="text-lg font-semibold mb-5 text-white">Our Links</h3>
+          <ul class="space-y-3 text-gray-400">
+            <li><a href="index.html" class="hover:text-orange-500 transition">Home</a></li>
+            <li><a href="aboutus.html" class="hover:text-orange-500 transition">About Us</a></li>
+            <li><a href="pricing.html" class="hover:text-orange-500 transition">Pricing</a></li>
+            <li><a href="how_it_works.html" class="hover:text-orange-500 transition">How It Works</a></li>
+            <li><a href="contactus.html" class="hover:text-orange-500 transition">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <!-- Our Services -->
+        <div>
+          <h3 class="text-lg font-semibold mb-5 text-white">Our Services</h3>
+          <ul class="space-y-3 text-gray-400">
+            <li><a class="hover:text-orange-500 transition">Resume Analysis</a></li>
+            <li><a class="hover:text-orange-500 transition">Career Roadmap</a></li>
+            <li><a class="hover:text-orange-500text-blue-400 transition">Skill Gap Detection</a></li>
+            <li><a class="hover:text-orange-500 transition">AI Suggestions</a></li>
+
+          </ul>
+        </div>
+
+
+
+        <!-- Contact Us -->
+        <div>
+          <h3 class="text-lg font-semibold mb-5 text-white">Contact Us</h3>
+
+          <div class="space-y-4 text-gray-400">
+
+            <div class="flex items-start space-x-3">
+              <i class="fa-solid fa-phone text-white-500 mt-1"></i>
+              <div>
+                <p>+91 98765 43210</p>
+                <p>+91 91234 56789</p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-3">
+              <i class="fa-solid fa-envelope text-white-500 mt-1"></i>
+              <div>
+                <p>info@skillscan.com</p>
+                <p>support@skillscan.com</p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-3">
+              <i class="fa-solid fa-location-dot text-white-500 mt-1"></i>
+              <div>
+                <p>Vadodara, Gujarat, India</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="border-t border-slate-700 mt-12 pt-6 text-center text-gray-500 text-sm">
+        © 2026 <span class="text-white font-semibold">SkillScan</span>. All Rights Reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+  <button id="goTopBtn"
+    class="fixed bottom-6 right-6 w-12 h-12 bg-white border border-gray-300 text-slate-800 rounded-lg shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 hover:bg-gray-100">
+
+    <i class="fa-solid fa-arrow-up"></i>
+
+  </button>
+
+
+
+  <script src="script.js"></script>
+</body>
+
+</html>

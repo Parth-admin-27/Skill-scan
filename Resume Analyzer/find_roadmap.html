@@ -570,7 +570,7 @@
             searchCareer();
         }
 
-        const ROADMAP_API_BASE = "http://localhost:3000/api/roadmap";
+        const ROADMAP_API_BASE = `${location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? 'http://localhost:3000' : ''}/api/roadmap`;
 
         function renderRoadmap(roadmap) {
             const stepsContainer = document.getElementById('roadmap-steps');

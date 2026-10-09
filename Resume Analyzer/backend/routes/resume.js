@@ -6,7 +6,19 @@ const mammoth = require("mammoth");
 
 require("dotenv").config();
 
-const upload = multer({ storage: multer.memoryStorage() });
+const allowedMimeTypes = new Set([
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain"
+]);
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+    fileFilter: (req, file, callback) => {
+        callback(allowedMimeTypes.has(file.mimetype) ? null : new Error("Only PDF, DOCX and TXT resumes are allowed"), allowedMimeTypes.has(file.mimetype));
+    }
+});
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY; // Fallback in case they pasted the groq key into GEMINI_API_KEY
 const Groq = require("groq-sdk");
@@ -70,7 +82,98 @@ async function callGroqWithFallback(request) {
 }
 
 const authMiddleware = require("../middleware/authMiddleware");
-const Resume = require("../models/Resume");
+const supabase = require("../config/supabase");
+
+const CURRENT_YEAR = new Date().getFullYear();
+
+function uniqueSkills(skills = []) {
+    return [...new Set(skills.map(skill => String(skill).trim()).filter(Boolean))];
+}
+
+function extractFirstJsonObject(value) {
+    const text = String(value || "");
+    const start = text.indexOf("{");
+    if (start === -1) return null;
+
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    for (let index = start; index < text.length; index += 1) {
+        const character = text[index];
+        if (inString) {
+            if (escaped) escaped = false;
+            else if (character === "\\") escaped = true;
+            else if (character === '"') inString = false;
+            continue;
+        }
+        if (character === '"') inString = true;
+        else if (character === "{") depth += 1;
+        else if (character === "}") {
+            depth -= 1;
+            if (depth === 0) return text.slice(start, index + 1);
+        }
+    }
+    return null;
+}
+
+function buildSkillInsights(analysis = {}) {
+    const evidenceBySkill = new Map(
+        (analysis.skillEvidence || []).map(item => [String(item.skill || "").toLowerCase(), item])
+    );
+
+    const evidence = uniqueSkills(analysis.currentSkills).map(skill => {
+        const source = evidenceBySkill.get(skill.toLowerCase()) || {};
+        const parsedYear = Number.parseInt(source.lastUsedYear, 10);
+        const lastUsedYear = Number.isFinite(parsedYear) && parsedYear >= 1980 && parsedYear <= CURRENT_YEAR ? parsedYear : null;
+        const evidenceText = String(source.evidence || "Listed in the resume's skills section").trim();
+        const evidenceType = String(source.evidenceType || "Skills section").trim();
+        const isAppliedEvidence = /project|experience|internship|employment|achievement/i.test(evidenceType);
+        const evidenceStrength = isAppliedEvidence && evidenceText.length >= 35 ? "Strong" : evidenceText.length >= 20 ? "Moderate" : "Weak";
+        return { skill, evidence: evidenceText, evidenceType, lastUsedYear, evidenceStrength };
+    });
+
+    const skillHealth = evidence.map(item => {
+        if (!item.lastUsedYear) {
+            return { ...item, yearsSinceUse: null, status: "Confirm recency", priority: "Medium", recommendation: `Add a recent project, certificate, or last-used year for ${item.skill}.` };
+        }
+        const yearsSinceUse = Math.max(0, CURRENT_YEAR - item.lastUsedYear);
+        if (yearsSinceUse <= 1) {
+            return { ...item, yearsSinceUse, status: "Active", priority: "Low", recommendation: `Keep using ${item.skill} in projects and document measurable results.` };
+        }
+        if (yearsSinceUse <= 2) {
+            return { ...item, yearsSinceUse, status: "Refresh soon", priority: "Medium", recommendation: `Complete a short refresher or mini-project using ${item.skill}.` };
+        }
+        return { ...item, yearsSinceUse, status: "Refresh recommended", priority: "High", recommendation: `Review current ${item.skill} practices and build a recent proof-of-work project.` };
+    });
+
+    return { evidence, skillHealth };
+}
+
+function compareVersions(previous, current) {
+    if (!previous) {
+        return { hasPreviousVersion: false, scoreDelta: 0, addedSkills: uniqueSkills(current.currentSkills), removedSkills: [], resolvedRecommendations: [], summary: "This is your baseline resume. Upload an improved version to measure progress." };
+    }
+
+    const previousSkills = uniqueSkills(previous.currentSkills);
+    const currentSkills = uniqueSkills(current.currentSkills);
+    const previousLookup = new Set(previousSkills.map(skill => skill.toLowerCase()));
+    const currentLookup = new Set(currentSkills.map(skill => skill.toLowerCase()));
+    const scoreDelta = Number(current.overallScore || 0) - Number(previous.overallScore || 0);
+    const currentImprovementText = (current.improvements || []).join(" ").toLowerCase();
+    const resolvedRecommendations = (previous.improvements || []).map(String).filter(item => {
+        const keywords = item.toLowerCase().split(/\W+/).filter(word => word.length > 5);
+        return keywords.length > 0 && !keywords.some(word => currentImprovementText.includes(word));
+    }).slice(0, 3);
+
+    return {
+        hasPreviousVersion: true,
+        scoreDelta,
+        addedSkills: currentSkills.filter(skill => !previousLookup.has(skill.toLowerCase())),
+        removedSkills: previousSkills.filter(skill => !currentLookup.has(skill.toLowerCase())),
+        resolvedRecommendations,
+        summary: scoreDelta > 0 ? `Your resume score improved by ${scoreDelta} points.` : scoreDelta < 0 ? `Your score changed by ${scoreDelta} points. Review the comparison before replacing your previous version.` : "Your score is unchanged; use the evidence and skill-health feedback for the next revision."
+    };
+}
 
 router.post("/analyze", authMiddleware, upload.single("resume"), async (req, res) => {
     try {
@@ -106,6 +209,7 @@ If the text is clearly NOT a resume (for example: a recipe, grocery list, news a
 {"isResume": false, "errorReason": "A clear explanation of why the document is not recognized as a resume (e.g. 'The uploaded document appears to be a recipe, not a resume.')"}
 
 If it is a resume, return a JSON object with "isResume": true, and complete the analysis with these exact fields:
+Additionally include "skillEvidence": [{"skill":"one current skill","evidence":"exact short resume phrase or where the skill appears","evidenceType":"Project, Experience, Education, Certification, or Skills section","lastUsedYear":2020-2026 or null}]. Create one entry for every currentSkills item. Never invent a date; use null when no reliable year is present.
 {"isResume": true, "overallScore":0-100,"scoreLabel":"short label","strengths":[3 items],"improvements":[3 items],"currentSkills":[list],"missingSkills":[list for ${jd ? "the requirements in the Job Description" : "detected role"}],"targetRole":"${jd ? "Role from Job Description" : "role name"}","roadmap":[{"step":1,"title":"t","description":"d"},{"step":2,"title":"t","description":"d"},{"step":3,"title":"t","description":"d"}],"aiSuggestions":[4 items]}
 
 ${jd ? `Job Description:\n${jd.slice(0, 1000)}\n\n` : ""}Resume Text:
@@ -119,16 +223,16 @@ ${resumeText.slice(0, 2000)}`;
         });
 
         let text = completion.choices[0].message.content.trim();
-        const match = text.match(/\{[\s\S]*\}/);
-        if (!match) throw new Error("Invalid AI response format: No JSON object found.");
+        const jsonObject = extractFirstJsonObject(text);
+        if (!jsonObject) throw new Error("Invalid AI response format: No complete JSON object found.");
         
         let parsedResult;
         try {
-            parsedResult = JSON.parse(match[0]);
+            parsedResult = JSON.parse(jsonObject);
         } catch (e) {
             console.error("JSON parse error on AI response:", e.message);
             // Fallback: try to clean up trailing commas or cut-offs
-            text = match[0].replace(/,\s*([}\]])/g, '$1');
+            text = jsonObject.replace(/,\s*([}\]])/g, '$1');
             parsedResult = JSON.parse(text);
         }
 
@@ -139,20 +243,74 @@ ${resumeText.slice(0, 2000)}`;
 
         console.log("✅ Resume analyzed with Groq AI");
 
-        // Save to database
-        const newResume = new Resume({
-            userId: req.user.id,
-            jobDescription: jd,
-            analysisResult: parsedResult
-        });
-        await newResume.save();
-        console.log("💾 Analysis saved to database for user:", req.user.id);
+        const previousRows = await supabase.select(
+            "resume_versions",
+            `select=*&user_id=eq.${req.user.id}&order=created_at.desc&limit=1`
+        );
+        const previousResume = previousRows[0] || null;
+        const versionNumber = (previousResume?.version_number || 0) + 1;
+        const { evidence, skillHealth } = buildSkillInsights(parsedResult);
+        const enrichedResult = {
+            ...parsedResult,
+            skillEvidence: evidence,
+            skillHealth,
+            improvementComparison: compareVersions(previousResume?.analysis_result || null, parsedResult),
+            versionNumber,
+            analyzedAt: new Date().toISOString()
+        };
 
-        return res.json(parsedResult);
+        // Save this analysis as a new resume version
+        await supabase.insert("resume_versions", {
+            user_id: req.user.id,
+            job_description: jd,
+            file_name: req.file.originalname,
+            version_number: versionNumber,
+            analysis_result: enrichedResult
+        });
+        console.log(`💾 Resume version ${versionNumber} saved for user:`, req.user.id);
+
+        return res.json(enrichedResult);
 
     } catch (error) {
         console.error("Resume analysis error:", error.message);
         res.status(500).json({ error: "Analysis failed: " + error.message });
+    }
+});
+
+router.get("/insights", authMiddleware, async (req, res) => {
+    try {
+        const resumes = await supabase.select(
+            "resume_versions",
+            `select=*&user_id=eq.${req.user.id}&order=created_at.desc`
+        );
+        const versions = resumes.map(resume => ({
+            id: resume.id,
+            versionNumber: resume.version_number || 1,
+            fileName: resume.file_name || "Resume",
+            createdAt: resume.created_at,
+            score: Number(resume.analysis_result?.overallScore || 0),
+            targetRole: resume.analysis_result?.targetRole || "Not specified",
+            currentSkills: uniqueSkills(resume.analysis_result?.currentSkills),
+            improvementComparison: resume.analysis_result?.improvementComparison || null
+        }));
+
+        if (!resumes.length) {
+            return res.json({ latest: null, versions: [] });
+        }
+
+        const latest = resumes[0].analysis_result;
+        const fallbackInsights = buildSkillInsights(latest);
+        return res.json({
+            latest: {
+                ...latest,
+                skillEvidence: latest.skillEvidence?.length ? latest.skillEvidence : fallbackInsights.evidence,
+                skillHealth: latest.skillHealth?.length ? latest.skillHealth : fallbackInsights.skillHealth
+            },
+            versions
+        });
+    } catch (error) {
+        console.error("Resume insights error:", error.message);
+        return res.status(500).json({ error: "Unable to load resume insights" });
     }
 });
 

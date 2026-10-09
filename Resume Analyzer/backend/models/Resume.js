@@ -10,6 +10,15 @@ const ResumeSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    fileName: {
+        type: String,
+        default: "Resume"
+    },
+    versionNumber: {
+        type: Number,
+        required: true,
+        default: 1
+    },
     analysisResult: {
         type: Object,
         required: true

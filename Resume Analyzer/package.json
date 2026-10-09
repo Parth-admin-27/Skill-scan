@@ -1,28 +1,26 @@
 {
-  "name": "tailwindproject",
+  "name": "skillscan",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "api/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --check backend/server.js && node --check backend/routes/auth.js && node --check backend/routes/resume.js"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "tailwindcss": "^3.4.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Anuj-Kumar-Sharma/tailwind-landing-page.git"
-  },
-  "keywords": [],
+  "keywords": ["resume", "ats", "career"],
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Anuj-Kumar-Sharma/tailwind-landing-page/issues"
-  },
-  "homepage": "https://github.com/Anuj-Kumar-Sharma/tailwind-landing-page#readme",
   "dependencies": {
-    "pptxgenjs": "^4.0.1",
-    "puppeteer": "^24.39.0"
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "groq-sdk": "^1.1.1",
+    "jsonwebtoken": "^9.0.3",
+    "mammoth": "^1.12.0",
+    "multer": "^2.1.1",
+    "nodemailer": "^10.0.16",
+    "otp-generator": "^4.0.1",
+    "pdf-parse": "^2.4.5"
   }
 }

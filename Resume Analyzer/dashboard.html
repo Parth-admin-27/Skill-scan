@@ -112,29 +112,214 @@
     </div>
 </div>
 
+<!-- Career Intelligence Features -->
+<section class="pb-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+                <p class="text-sm font-bold uppercase tracking-[0.2em] text-indigo-600">Career Intelligence</p>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">Your resume growth dashboard</h2>
+                <p class="text-gray-500 mt-2">Track improvement, verify skill evidence, and identify skills that need refreshing.</p>
+            </div>
+            <a href="sample_resume.html" class="inline-flex justify-center bg-indigo-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Analyze a new version</a>
+        </div>
+
+        <div id="insights-loading" class="bg-white rounded-2xl border border-gray-200 p-8 text-center text-gray-500 shadow-sm">
+            Loading your resume intelligence…
+        </div>
+
+        <div id="insights-empty" class="hidden bg-white rounded-2xl border border-dashed border-indigo-300 p-10 text-center shadow-sm">
+            <div class="w-16 h-16 mx-auto rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl">↗</div>
+            <h3 class="text-xl font-bold text-gray-900 mt-4">Create your baseline resume analysis</h3>
+            <p class="text-gray-500 mt-2 max-w-xl mx-auto">Your first analysis becomes Version 1. Upload another version later to measure score, skill, and evidence improvements.</p>
+            <a href="sample_resume.html" class="inline-block mt-6 bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold">Analyze Resume</a>
+        </div>
+
+        <div id="insights-content" class="hidden space-y-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                <div class="bg-slate-950 text-white rounded-2xl p-6 shadow-lg">
+                    <p class="text-slate-400 text-sm">Latest ATS score</p>
+                    <p id="latest-score" class="text-4xl font-bold mt-2">0%</p>
+                    <p id="score-change" class="text-sm mt-3 text-slate-300"></p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                    <p class="text-gray-500 text-sm">Resume versions</p>
+                    <p id="version-count" class="text-4xl font-bold text-gray-900 mt-2">0</p>
+                    <p class="text-sm text-gray-500 mt-3">Progress saved after every analysis</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                    <p class="text-gray-500 text-sm">Strong skill evidence</p>
+                    <p id="strong-evidence-count" class="text-4xl font-bold text-emerald-600 mt-2">0</p>
+                    <p class="text-sm text-gray-500 mt-3">Supported by projects or experience</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                    <p class="text-gray-500 text-sm">Refresh priorities</p>
+                    <p id="refresh-count" class="text-4xl font-bold text-amber-600 mt-2">0</p>
+                    <p class="text-sm text-gray-500 mt-3">Skills needing recent proof of use</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <article class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                    <div class="flex items-center justify-between gap-4 mb-5">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Resume Improvement Tracker</h3>
+                            <p class="text-sm text-gray-500 mt-1">Score and skills across uploaded versions</p>
+                        </div>
+                        <span id="latest-version" class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold"></span>
+                    </div>
+                    <div id="version-history" class="space-y-4"></div>
+                    <div id="comparison-summary" class="mt-5 rounded-xl bg-indigo-50 border border-indigo-100 p-4 text-sm text-indigo-900"></div>
+                </article>
+
+                <article class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-900">Skill Refresh Analysis</h3>
+                    <p class="text-sm text-gray-500 mt-1 mb-5">A recency estimate based only on dated resume evidence</p>
+                    <div id="skill-health" class="space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
+                </article>
+            </div>
+
+            <article class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                <div class="mb-5">
+                    <h3 class="text-xl font-bold text-gray-900">Evidence-Backed Skills</h3>
+                    <p class="text-sm text-gray-500 mt-1">See exactly where each claimed skill is supported in your resume.</p>
+                </div>
+                <div id="skill-evidence" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </article>
+        </div>
+
+        <div id="insights-error" class="hidden bg-red-50 border border-red-200 text-red-700 p-5 rounded-xl"></div>
+    </div>
+</section>
+
 <!-- Footer -->
 <footer class="bg-gray-800 text-white py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-gray-400">© 2024 SkillScan. All rights reserved.</p>
+        <p class="text-gray-400">© 2026 SkillScan. All rights reserved.</p>
     </div>
 </footer>
 
 <script>
-    // Check if user is logged in
     const user = localStorage.getItem('user');
+    const token = localStorage.getItem('skillscan_token');
     
-    if (!user) {
-        // Not logged in, redirect to login
+    if (!user || !token) {
         window.location.href = 'login.html';
     } else {
         const userData = JSON.parse(user);
         document.getElementById('welcome-message').textContent = `Welcome, ${userData.name}!`;
         document.getElementById('user-name').textContent = userData.name;
         document.getElementById('profile-email').textContent = userData.email;
+        loadResumeInsights();
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>'"]/g, character => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;'
+        })[character]);
+    }
+
+    function formatDate(value) {
+        return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value));
+    }
+
+    async function loadResumeInsights() {
+        const loading = document.getElementById('insights-loading');
+        const empty = document.getElementById('insights-empty');
+        const content = document.getElementById('insights-content');
+        const errorBox = document.getElementById('insights-error');
+
+        try {
+            const apiOrigin = location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
+            const response = await fetch(`${apiOrigin}/api/resume/insights`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || data.message || 'Unable to load insights');
+
+            loading.classList.add('hidden');
+            if (!data.latest) {
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            renderResumeInsights(data);
+            content.classList.remove('hidden');
+        } catch (error) {
+            loading.classList.add('hidden');
+            errorBox.textContent = `Could not load career intelligence: ${error.message}`;
+            errorBox.classList.remove('hidden');
+        }
+    }
+
+    function renderResumeInsights(data) {
+        const latest = data.latest;
+        const versions = data.versions || [];
+        const evidence = latest.skillEvidence || [];
+        const skillHealth = latest.skillHealth || [];
+        const comparison = latest.improvementComparison || {};
+
+        document.getElementById('latest-score').textContent = `${latest.overallScore || 0}%`;
+        document.getElementById('version-count').textContent = versions.length;
+        document.getElementById('latest-version').textContent = `Version ${latest.versionNumber || versions.length}`;
+        document.getElementById('strong-evidence-count').textContent = evidence.filter(item => item.evidenceStrength === 'Strong').length;
+        document.getElementById('refresh-count').textContent = skillHealth.filter(item => item.priority === 'High' || item.priority === 'Medium').length;
+
+        const delta = Number(comparison.scoreDelta || 0);
+        document.getElementById('score-change').textContent = comparison.hasPreviousVersion
+            ? `${delta > 0 ? '+' : ''}${delta} points from the previous version`
+            : 'Baseline score established';
+        document.getElementById('comparison-summary').innerHTML = `
+            <p class="font-semibold">${escapeHtml(comparison.summary || 'Upload another version to measure progress.')}</p>
+            ${comparison.addedSkills?.length ? `<p class="mt-2"><strong>New skills:</strong> ${comparison.addedSkills.map(escapeHtml).join(', ')}</p>` : ''}
+            ${comparison.resolvedRecommendations?.length ? `<p class="mt-2"><strong>Potentially resolved:</strong> ${comparison.resolvedRecommendations.map(escapeHtml).join('; ')}</p>` : ''}
+        `;
+
+        document.getElementById('version-history').innerHTML = versions.map((version, index) => `
+            <div class="rounded-xl border ${index === 0 ? 'border-indigo-200 bg-indigo-50/60' : 'border-gray-200'} p-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="font-bold text-gray-900">Version ${version.versionNumber} · ${escapeHtml(version.fileName)}</p>
+                        <p class="text-xs text-gray-500 mt-1">${formatDate(version.createdAt)} · ${escapeHtml(version.targetRole)}</p>
+                    </div>
+                    <span class="text-lg font-bold ${version.score >= 70 ? 'text-emerald-600' : version.score >= 40 ? 'text-amber-600' : 'text-red-600'}">${version.score}%</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full mt-3 overflow-hidden"><div class="h-full bg-indigo-600 rounded-full" style="width:${Math.max(0, Math.min(100, version.score))}%"></div></div>
+            </div>
+        `).join('');
+
+        const priorityOrder = { High: 0, Medium: 1, Low: 2 };
+        document.getElementById('skill-health').innerHTML = [...skillHealth]
+            .sort((a, b) => (priorityOrder[a.priority] ?? 3) - (priorityOrder[b.priority] ?? 3))
+            .map(item => {
+                const surfaceClass = item.priority === 'High' ? 'border-red-100 bg-red-50/60' : item.priority === 'Medium' ? 'border-amber-100 bg-amber-50/60' : 'border-emerald-100 bg-emerald-50/60';
+                const badgeClass = item.priority === 'High' ? 'bg-red-100 text-red-700' : item.priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
+                return `<div class="border ${surfaceClass} rounded-xl p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div><p class="font-bold text-gray-900">${escapeHtml(item.skill)}</p><p class="text-xs text-gray-500 mt-1">${item.lastUsedYear ? `Last evidence: ${item.lastUsedYear}` : 'No reliable date found'}</p></div>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full ${badgeClass}">${escapeHtml(item.status)}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-3">${escapeHtml(item.recommendation)}</p>
+                </div>`;
+            }).join('') || '<p class="text-gray-500">Analyze a resume to calculate skill refresh priorities.</p>';
+
+        document.getElementById('skill-evidence').innerHTML = evidence.map(item => {
+            const badgeClass = item.evidenceStrength === 'Strong' ? 'bg-emerald-50 text-emerald-700' : item.evidenceStrength === 'Moderate' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-700';
+            return `<div class="rounded-xl border border-gray-200 p-5 hover:border-indigo-200 transition">
+                <div class="flex items-start justify-between gap-3">
+                    <h4 class="font-bold text-gray-900">${escapeHtml(item.skill)}</h4>
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full ${badgeClass}">${escapeHtml(item.evidenceStrength)}</span>
+                </div>
+                <p class="text-xs uppercase tracking-wide text-indigo-600 font-bold mt-4">${escapeHtml(item.evidenceType)}</p>
+                <p class="text-sm text-gray-600 mt-2 leading-relaxed">“${escapeHtml(item.evidence)}”</p>
+                <p class="text-xs text-gray-400 mt-3">${item.lastUsedYear ? `Evidence dated ${item.lastUsedYear}` : 'Date not stated in resume'}</p>
+            </div>`;
+        }).join('') || '<p class="text-gray-500">No skill evidence is available yet.</p>';
     }
 
     function logout() {
         localStorage.removeItem('user');
+        localStorage.removeItem('skillscan_token');
         window.location.href = 'login.html';
     }
 </script>

@@ -267,8 +267,12 @@
                 </div>
 
                 <!-- CTA -->
-                <div class="text-center pt-4">
-                    <button onclick="resetAnalysis()" class="btn-primary text-lg px-10 py-3.5 flex items-center gap-3 mx-auto">
+                <div class="text-center pt-4 flex flex-col sm:flex-row justify-center gap-3">
+                    <a href="dashboard.html" class="btn-primary text-lg px-10 py-3.5 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-chart-line"></i>
+                        View Career Intelligence
+                    </a>
+                    <button onclick="resetAnalysis()" class="btn-primary text-lg px-10 py-3.5 flex items-center justify-center gap-3">
                         <i class="fa-solid fa-arrow-rotate-left"></i>
                         Analyze Another Resume
                     </button>
@@ -287,7 +291,7 @@
 
     <script src="script.js"></script>
     <script>
-        const API_URL = 'http://localhost:3000/api/resume';
+        const API_URL = `${location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? 'http://localhost:3000' : ''}/api/resume`;
         const fileInput = document.getElementById('resume-file');
         const fileLabel = document.getElementById('file-label');
         const dropZone = document.getElementById('drop-zone');

@@ -1,12 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const supabase = require("../config/supabase");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
+
+async function findUser(email) {
+    const users = await supabase.select("users", `select=*&email=eq.${encodeURIComponent(email.toLowerCase())}&limit=1`);
+    return users[0] || null;
+}
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -16,43 +21,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Signup - Send OTP
-router.post("/signup", async (req, res) => {
-    const { name, email, password } = req.body;
-
+async function sendOtpEmail(email, otp) {
     try {
-        let user = await User.findOne({ email });
-
-        if (user && user.isVerified) {
-            return res.status(400).json({ message: "User already exists" });
-        }
-
-        const otp = otpGenerator.generate(6, {
-            digits: true,
-            alphabets: false,
-            upperCase: false,
-            specialChars: false
-        });
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        if (!user) {
-            user = new User({
-                name,
-                email,
-                password: hashedPassword,
-                otp,
-                otpExpire: Date.now() + 5 * 60 * 1000
-            });
-        } else {
-            user.name = name;
-            user.password = hashedPassword;
-            user.otp = otp;
-            user.otpExpire = Date.now() + 5 * 60 * 1000;
-        }
-
-        await user.save();
-
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: email,
@@ -65,7 +35,7 @@ router.post("/signup", async (req, res) => {
                     <div style="padding: 30px; background: #f9fafb; border-radius: 0 0 10px 10px;">
                         <h2 style="color: #1F2937; margin-top: 0;">Verify Your Email</h2>
                         <p style="color: #6B7280; line-height: 1.6;">
-                            Thank you for signing up with <strong>SkillScan</strong>! 
+                            Thank you for signing up with <strong>SkillScan</strong>!
                         </p>
                         <p style="color: #6B7280; line-height: 1.6;">
                             Your One-Time Password (OTP) for email verification is:
@@ -88,8 +58,69 @@ router.post("/signup", async (req, res) => {
                 </div>
             `
         });
+        return true;
+    } catch (error) {
+        console.warn("Email delivery failed, returning OTP in dev response:", error.message);
+        return false;
+    }
+}
 
-        res.json({ message: "OTP sent" });
+// Signup - Send OTP
+router.post("/signup", async (req, res) => {
+    const { name, password } = req.body;
+    const email = String(req.body.email || "").trim().toLowerCase();
+
+    if (!name || !email || !password || password.length < 6) {
+        return res.status(400).json({ message: "Name, email and a 6-character password are required" });
+    }
+
+    try {
+        const user = await findUser(email);
+
+        if (user && user.is_verified) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        const otp = otpGenerator.generate(6, {
+            digits: true,
+            lowerCaseAlphabets: false,
+            upperCaseAlphabets: false,
+            specialChars: false
+        });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const values = {
+            name,
+            email,
+            password_hash: hashedPassword,
+            otp,
+            otp_expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString()
+        };
+
+        if (user) {
+            await supabase.update("users", `id=eq.${user.id}`, values);
+        } else {
+            await supabase.insert("users", {
+                name,
+                email,
+                password_hash: hashedPassword,
+                otp,
+                otp_expires_at: values.otp_expires_at
+            });
+        }
+
+        const emailSent = await sendOtpEmail(email, otp);
+
+        const response = { message: "OTP sent" };
+        if (!emailSent || process.env.NODE_ENV !== "production") {
+            response.devOtp = otp;
+            response.note = emailSent
+                ? "Local development mode: devOtp is included for testing."
+                : "Email delivery failed in local mode; use devOtp to verify the account.";
+        }
+
+        res.json(response);
 
     } catch (error) {
         console.log(error);
@@ -99,22 +130,23 @@ router.post("/signup", async (req, res) => {
 
 // Verify OTP
 router.post("/verify-otp", async (req, res) => {
-    const { email, otp } = req.body;
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const otp = String(req.body.otp || "").trim();
 
     try {
-        const user = await User.findOne({ email });
+        const user = await findUser(email);
 
         if (!user) return res.status(400).json({ message: "User not found" });
 
-        if (user.otp !== otp || user.otpExpire < Date.now()) {
+        if (user.otp !== otp || new Date(user.otp_expires_at).getTime() < Date.now()) {
             return res.status(400).json({ message: "Invalid OTP" });
         }
 
-        user.isVerified = true;
-        user.otp = null;
-        user.otpExpire = null;
-
-        await user.save();
+        await supabase.update("users", `id=eq.${user.id}`, {
+            is_verified: true,
+            otp: null,
+            otp_expires_at: null
+        });
 
         res.json({ message: "Account verified" });
     } catch (error) {
@@ -125,24 +157,24 @@ router.post("/verify-otp", async (req, res) => {
 
 // Resend OTP
 router.post("/resend-otp", async (req, res) => {
-    const { email } = req.body;
+    const email = String(req.body.email || "").trim().toLowerCase();
 
     try {
-        const user = await User.findOne({ email });
+        const user = await findUser(email);
 
         if (!user) return res.status(400).json({ message: "User not found" });
 
         const otp = otpGenerator.generate(6, {
             digits: true,
-            alphabets: false,
-            upperCase: false,
+            lowerCaseAlphabets: false,
+            upperCaseAlphabets: false,
             specialChars: false
         });
 
-        user.otp = otp;
-        user.otpExpire = Date.now() + 5 * 60 * 1000;
-
-        await user.save();
+        await supabase.update("users", `id=eq.${user.id}`, {
+            otp,
+            otp_expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString()
+        });
 
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
@@ -187,23 +219,24 @@ router.post("/resend-otp", async (req, res) => {
 
 // Login
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const password = String(req.body.password || "");
+    const email = String(req.body.email || "").trim().toLowerCase();
 
     try {
-        const user = await User.findOne({ email });
+        const user = await findUser(email);
 
-        if (!user || !user.isVerified) {
+        if (!user || !user.is_verified) {
             return res.status(400).json({ message: "Account not verified" });
         }
 
-        const match = await bcrypt.compare(password, user.password);
+        const match = await bcrypt.compare(password, user.password_hash);
 
         if (!match) {
             return res.status(400).json({ message: "Invalid password" });
         }
 
         const token = jwt.sign(
-            { id: user._id }, 
+            { id: user.id }, 
             process.env.JWT_SECRET || "fallback_secret_key_123", 
             { expiresIn: "7d" }
         );

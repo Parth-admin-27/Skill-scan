@@ -8,9 +8,14 @@
   },
   "author": "",
   "license": "ISC",
-  "keywords": ["resume", "ats", "career"],
+  "keywords": [
+    "resume",
+    "ats",
+    "career"
+  ],
   "type": "commonjs",
   "dependencies": {
+    "@napi-rs/canvas": "^1.0.10",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",

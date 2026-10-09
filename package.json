@@ -15,7 +15,6 @@
   ],
   "type": "commonjs",
   "dependencies": {
-    "@napi-rs/canvas": "^1.0.10",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
@@ -26,6 +25,6 @@
     "multer": "^2.1.1",
     "nodemailer": "^10.0.16",
     "otp-generator": "^4.0.1",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^1.1.1"
   }
 }

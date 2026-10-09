@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const { PDFParse } = require("pdf-parse");
+const pdfParse = require("pdf-parse");
 const mammoth = require("mammoth");
 
 require("dotenv").config();
@@ -182,17 +182,8 @@ router.post("/analyze", authMiddleware, upload.single("resume"), async (req, res
         let resumeText = "";
 
         if (req.file.mimetype === "application/pdf") {
-            const uint8 = new Uint8Array(req.file.buffer);
-            const parser = new PDFParse(uint8);
-            await parser.load();
-            const result = await parser.getText();
-            if (typeof result === 'string') {
-                resumeText = result;
-            } else if (result && result.pages) {
-                resumeText = result.pages.map(p => p.text).join('\n');
-            } else {
-                resumeText = String(result);
-            }
+            const result = await pdfParse(req.file.buffer);
+            resumeText = result.text;
         } else if (req.file.mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || req.file.originalname.endsWith(".docx")) {
             const result = await mammoth.extractRawText({ buffer: req.file.buffer });
             resumeText = result.value;

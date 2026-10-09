@@ -22,7 +22,7 @@ Use `backend/.env.example` as the variable-name reference. Never commit `backend
 
 ## 3. Deploy
 
-Import the GitHub repository into Vercel and set **Root Directory** to `Resume Analyzer`. Vercel reads `vercel.json`, serves the HTML frontend, and sends `/api/*` requests to `api/index.js`.
+Import the GitHub repository into Vercel and keep **Root Directory** as `.`. Vercel reads `vercel.json`, serves the HTML frontend, and sends `/api/*` requests to `api/index.js`.
 
 ## 4. Verify
 

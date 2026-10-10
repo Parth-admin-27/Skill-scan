@@ -83,6 +83,7 @@ async function callGroqWithFallback(request) {
 
 const authMiddleware = require("../middleware/authMiddleware");
 const supabase = require("../config/supabase");
+const { buildExplainableScore, buildJobMatches, runEvaluationBenchmark } = require("../lib/resumeScoring");
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -175,6 +176,25 @@ function compareVersions(previous, current) {
     };
 }
 
+function parseJobs(value, fallbackDescription = "") {
+    let jobs = [];
+    try {
+        jobs = value ? JSON.parse(value) : [];
+    } catch (_error) {
+        jobs = [];
+    }
+    if (!Array.isArray(jobs)) jobs = [];
+    jobs = jobs
+        .map((job, index) => ({
+            title: String(job?.title || `Job ${index + 1}`).slice(0, 100),
+            description: String(job?.description || "").slice(0, 5000)
+        }))
+        .filter(job => job.description.trim())
+        .slice(0, 5);
+    if (!jobs.length && fallbackDescription) jobs.push({ title: "Target role", description: fallbackDescription.slice(0, 5000) });
+    return jobs;
+}
+
 router.post("/analyze", authMiddleware, upload.single("resume"), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -193,7 +213,8 @@ router.post("/analyze", authMiddleware, upload.single("resume"), async (req, res
 
         if (!resumeText.trim()) return res.status(400).json({ error: "Could not extract text from resume" });
 
-        const jd = req.body.jobDescription || "";
+        const submittedJobs = parseJobs(req.body.jobDescriptions, req.body.jobDescription || "");
+        const jd = submittedJobs[0]?.description || req.body.jobDescription || "";
         const prompt = `You are a resume screening system. Analyze the provided text.
 First, verify if the provided text is a resume or contains resume-like information (e.g. professional experience, education, skills, projects, or work history). Be lenient with short or incomplete resumes.
 If the text is clearly NOT a resume (for example: a recipe, grocery list, news article, book chapter, random text, syllabus, exam paper, or general document), you MUST return a JSON object with this format:
@@ -241,11 +262,19 @@ ${resumeText.slice(0, 2000)}`;
         const previousResume = previousRows[0] || null;
         const versionNumber = (previousResume?.version_number || 0) + 1;
         const { evidence, skillHealth } = buildSkillInsights(parsedResult);
+        const scoredAnalysis = { ...parsedResult, skillEvidence: evidence };
+        const atsBreakdown = buildExplainableScore({ analysis: scoredAnalysis, resumeText, jobDescription: jd });
+        const jobMatches = buildJobMatches({ resumeText, jobs: submittedJobs, analysis: scoredAnalysis });
         const enrichedResult = {
             ...parsedResult,
+            overallScore: atsBreakdown.totalScore,
+            scoreLabel: atsBreakdown.totalScore >= 75 ? "Strong ATS readiness" : atsBreakdown.totalScore >= 55 ? "Good foundation — targeted improvements recommended" : "Needs targeted improvement",
+            atsBreakdown,
+            jobMatches,
+            bestJob: jobMatches[0] || null,
             skillEvidence: evidence,
             skillHealth,
-            improvementComparison: compareVersions(previousResume?.analysis_result || null, parsedResult),
+            improvementComparison: compareVersions(previousResume?.analysis_result || null, { ...parsedResult, overallScore: atsBreakdown.totalScore }),
             versionNumber,
             analyzedAt: new Date().toISOString()
         };
@@ -286,7 +315,7 @@ router.get("/insights", authMiddleware, async (req, res) => {
         }));
 
         if (!resumes.length) {
-            return res.json({ latest: null, versions: [] });
+            return res.json({ latest: null, versions: [], evaluation: runEvaluationBenchmark() });
         }
 
         const latest = resumes[0].analysis_result;
@@ -297,7 +326,8 @@ router.get("/insights", authMiddleware, async (req, res) => {
                 skillEvidence: latest.skillEvidence?.length ? latest.skillEvidence : fallbackInsights.evidence,
                 skillHealth: latest.skillHealth?.length ? latest.skillHealth : fallbackInsights.skillHealth
             },
-            versions
+            versions,
+            evaluation: runEvaluationBenchmark()
         });
     } catch (error) {
         console.error("Resume insights error:", error.message);

@@ -4,7 +4,7 @@
   "description": "",
   "main": "api/index.js",
   "scripts": {
-    "test": "node --check backend/server.js && node --check backend/routes/auth.js && node --check backend/routes/resume.js"
+    "test": "node --check backend/server.js && node --check backend/routes/auth.js && node --check backend/routes/resume.js && node backend/test_resume_scoring.js"
   },
   "author": "",
   "license": "ISC",

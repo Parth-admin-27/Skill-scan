@@ -159,11 +159,32 @@
                     <p id="upload-error" class="text-red-500 text-sm mt-4 hidden"></p>
                 </div>
                 
-                <!-- Job Description Input -->
+                <!-- Job comparison inputs -->
                 <div class="mt-8 border-t border-gray-100 pt-8">
-                    <label for="job-desc" class="block text-sm font-semibold text-gray-700 mb-2">Job Description (Optional)</label>
-                    <p class="text-xs text-gray-500 mb-3">Paste the job description you are applying for to get tailored ATS scoring and skill gap detection.</p>
-                    <textarea id="job-desc" rows="4" class="w-full rounded-xl border-gray-200 border p-4 text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="e.g. We are looking for a Senior Frontend Developer with 5+ years of React experience..."></textarea>
+                    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-gray-900">Resume-to-job comparison <span class="text-gray-400 font-medium">(optional)</span></h3>
+                            <p class="text-xs text-gray-500 mt-1">Compare the same resume against up to three jobs and see which one to prioritize.</p>
+                        </div>
+                        <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">Decision-support mode</span>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div class="rounded-xl border border-indigo-200 bg-indigo-50/40 p-4">
+                            <label for="job-title-1" class="block text-xs font-bold uppercase tracking-wide text-indigo-700 mb-2">Job 1 · Primary</label>
+                            <input id="job-title-1" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm mb-3 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Frontend Developer">
+                            <textarea id="job-desc" rows="5" class="w-full rounded-lg border-gray-200 border p-3 text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Paste the first job description..."></textarea>
+                        </div>
+                        <div class="rounded-xl border border-gray-200 p-4">
+                            <label for="job-title-2" class="block text-xs font-bold uppercase tracking-wide text-gray-600 mb-2">Job 2</label>
+                            <input id="job-title-2" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm mb-3 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Backend Developer">
+                            <textarea id="job-desc-2" rows="5" class="w-full rounded-lg border-gray-200 border p-3 text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Paste another job description..."></textarea>
+                        </div>
+                        <div class="rounded-xl border border-gray-200 p-4">
+                            <label for="job-title-3" class="block text-xs font-bold uppercase tracking-wide text-gray-600 mb-2">Job 3</label>
+                            <input id="job-title-3" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm mb-3 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Data Analyst">
+                            <textarea id="job-desc-3" rows="5" class="w-full rounded-lg border-gray-200 border p-3 text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Paste another job description..."></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -215,6 +236,33 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Explainable ATS scoring -->
+                <div class="bg-slate-950 text-white rounded-2xl p-6 sm:p-8 shadow-xl">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.2em] text-indigo-300 font-bold">Transparent algorithm</p>
+                            <h2 class="text-xl font-bold mt-2">Why you received this ATS score</h2>
+                            <p id="ats-formula" class="text-sm text-slate-400 mt-2"></p>
+                        </div>
+                        <span class="text-xs font-bold bg-white/10 border border-white/10 px-3 py-1.5 rounded-full">No black-box final score</span>
+                    </div>
+                    <div id="ats-breakdown" class="space-y-4"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="rounded-xl bg-emerald-500/10 border border-emerald-400/20 p-4"><p class="text-sm font-bold text-emerald-300">Matched keywords</p><div id="matched-keywords" class="flex flex-wrap gap-2 mt-3"></div></div>
+                        <div class="rounded-xl bg-rose-500/10 border border-rose-400/20 p-4"><p class="text-sm font-bold text-rose-300">Missing keywords</p><div id="missing-keywords" class="flex flex-wrap gap-2 mt-3"></div></div>
+                    </div>
+                </div>
+
+                <!-- Multi-job comparison -->
+                <div id="job-match-card" class="hidden bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+                    <div class="mb-6">
+                        <p class="text-xs uppercase tracking-[0.2em] text-indigo-600 font-bold">Decision support</p>
+                        <h2 class="text-xl font-bold text-gray-900 mt-2">Best job to prioritize</h2>
+                        <p class="text-sm text-gray-500 mt-1">One resume, ranked across every job description you provided.</p>
+                    </div>
+                    <div id="job-matches" class="grid grid-cols-1 lg:grid-cols-3 gap-4"></div>
                 </div>
 
                 <!-- Strengths & Improvements -->
@@ -299,6 +347,12 @@
         const fileName = document.getElementById('file-name');
         const uploadIcon = document.getElementById('upload-icon');
 
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;'
+            })[character]);
+        }
+
         // File selection
         fileInput.addEventListener('change', () => {
             if (fileInput.files[0]) {
@@ -376,10 +430,15 @@
             const formData = new FormData();
             formData.append('resume', file);
             
-            const jd = document.getElementById('job-desc').value.trim();
+            const jobs = [1, 2, 3].map(index => ({
+                title: document.getElementById(`job-title-${index}`).value.trim() || `Job ${index}`,
+                description: document.getElementById(index === 1 ? 'job-desc' : `job-desc-${index}`).value.trim()
+            })).filter(job => job.description);
+            const jd = jobs[0]?.description || '';
             if (jd) {
                 formData.append('jobDescription', jd);
             }
+            if (jobs.length) formData.append('jobDescriptions', JSON.stringify(jobs));
 
             try {
                 const res = await fetch(`${API_URL}/analyze`, {
@@ -422,11 +481,41 @@
                 ? 'Detected Target Role: ' + data.targetRole
                 : '';
 
+            const ats = data.atsBreakdown || {};
+            document.getElementById('ats-formula').textContent = ats.formula || 'Skills 35% + Experience 25% + Education 15% + Projects & evidence 15% + Resume quality 10%';
+            document.getElementById('ats-breakdown').innerHTML = (ats.categories || []).map(item => `
+                <div>
+                    <div class="flex items-center justify-between gap-3 text-sm">
+                        <div><span class="font-semibold">${escapeHtml(item.label)}</span><span class="text-slate-500 ml-2">${item.weight}% weight</span></div>
+                        <span class="font-bold">${item.score}/${item.weight}</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden mt-2"><div class="h-full bg-gradient-to-r from-indigo-400 to-cyan-300 rounded-full" style="width:${Math.max(0, Math.min(100, item.percentage || 0))}%"></div></div>
+                    <p class="text-xs text-slate-400 mt-2">${escapeHtml(item.reason)}</p>
+                </div>`).join('');
+            const keywordChip = (value, type) => `<span class="text-xs px-2.5 py-1 rounded-full ${type === 'match' ? 'bg-emerald-400/15 text-emerald-200' : 'bg-rose-400/15 text-rose-200'}">${escapeHtml(value)}</span>`;
+            document.getElementById('matched-keywords').innerHTML = (ats.matchedKeywords || []).map(value => keywordChip(value, 'match')).join('') || '<span class="text-xs text-slate-400">Add a job description for direct matching.</span>';
+            document.getElementById('missing-keywords').innerHTML = (ats.missingKeywords || []).map(value => keywordChip(value, 'missing')).join('') || '<span class="text-xs text-slate-400">No explicit missing keywords detected.</span>';
+
+            const matches = data.jobMatches || [];
+            const matchCard = document.getElementById('job-match-card');
+            matchCard.classList.toggle('hidden', !matches.length);
+            document.getElementById('job-matches').innerHTML = matches.map(job => `
+                <div class="rounded-xl border ${job.isBestMatch ? 'border-indigo-300 bg-indigo-50/60' : 'border-gray-200'} p-5 relative overflow-hidden">
+                    ${job.isBestMatch ? '<span class="absolute right-3 top-3 text-[10px] font-bold uppercase tracking-wide bg-indigo-600 text-white px-2 py-1 rounded-full">Best match</span>' : ''}
+                    <p class="text-xs font-bold text-gray-400">Priority #${job.rank}</p>
+                    <h3 class="font-bold text-gray-900 mt-2 pr-16">${escapeHtml(job.title)}</h3>
+                    <p class="text-3xl font-bold text-indigo-600 mt-4">${job.compatibility}%</p>
+                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden mt-2"><div class="h-full bg-indigo-600" style="width:${job.compatibility}%"></div></div>
+                    <p class="text-sm font-semibold text-gray-800 mt-4">${escapeHtml(job.priority)}</p>
+                    <p class="text-xs text-gray-500 mt-1">${escapeHtml(job.reason)}</p>
+                    <p class="text-xs text-rose-600 mt-3"><strong>Missing:</strong> ${job.missingSkills?.length ? job.missingSkills.map(escapeHtml).join(', ') : 'None detected'}</p>
+                </div>`).join('');
+
             // Strengths
             document.getElementById('strengths').innerHTML = (data.strengths || []).map(s =>
                 `<li class="flex items-start gap-2 text-sm text-gray-700">
                     <i class="fa-solid fa-check text-green-400 mt-0.5 flex-shrink-0"></i>
-                    <span>${s}</span>
+                    <span>${escapeHtml(s)}</span>
                 </li>`
             ).join('');
 
@@ -434,20 +523,20 @@
             document.getElementById('improvements').innerHTML = (data.improvements || []).map(s =>
                 `<li class="flex items-start gap-2 text-sm text-gray-700">
                     <i class="fa-solid fa-arrow-up text-amber-400 mt-0.5 flex-shrink-0"></i>
-                    <span>${s}</span>
+                    <span>${escapeHtml(s)}</span>
                 </li>`
             ).join('');
 
             // Current Skills
             document.getElementById('current-skills').innerHTML = (data.currentSkills || []).map(s =>
-                `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">${s}</span>`
+                `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">${escapeHtml(s)}</span>`
             ).join('');
 
             // Missing Skills
             document.getElementById('missing-skills-title').textContent =
                 data.targetRole ? `Missing Skills for ${data.targetRole}` : 'Missing Skills';
             document.getElementById('missing-skills').innerHTML = (data.missingSkills || []).map(s =>
-                `<span class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-sm font-medium">${s}</span>`
+                `<span class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-sm font-medium">${escapeHtml(s)}</span>`
             ).join('');
 
             // Roadmap
@@ -455,8 +544,8 @@
                 `<div class="flex gap-4 items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
                     <div class="w-9 h-9 min-w-[36px] bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">${r.step}</div>
                     <div>
-                        <h4 class="font-semibold text-gray-800">${r.title}</h4>
-                        <p class="text-sm text-gray-500 mt-1">${r.description}</p>
+                        <h4 class="font-semibold text-gray-800">${escapeHtml(r.title)}</h4>
+                        <p class="text-sm text-gray-500 mt-1">${escapeHtml(r.description)}</p>
                     </div>
                 </div>`
             ).join('');
@@ -465,7 +554,7 @@
             document.getElementById('ai-suggestions').innerHTML = (data.aiSuggestions || []).map(s =>
                 `<div class="flex items-start gap-3 p-3 bg-purple-50 rounded-xl">
                     <i class="fa-solid fa-lightbulb text-purple-400 mt-0.5"></i>
-                    <span class="text-sm text-gray-700">${s}</span>
+                    <span class="text-sm text-gray-700">${escapeHtml(s)}</span>
                 </div>`
             ).join('');
 

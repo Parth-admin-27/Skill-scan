@@ -186,7 +186,35 @@
                 </div>
                 <div id="skill-evidence" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
             </article>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <article class="bg-slate-950 text-white rounded-2xl p-6 shadow-xl">
+                    <p class="text-xs uppercase tracking-[0.2em] text-indigo-300 font-bold">Explainable ATS</p>
+                    <h3 class="text-xl font-bold mt-2">Weighted score breakdown</h3>
+                    <p id="dashboard-ats-formula" class="text-sm text-slate-400 mt-2"></p>
+                    <div id="dashboard-ats-breakdown" class="space-y-4 mt-6"></div>
+                </article>
+                <article class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                    <p class="text-xs uppercase tracking-[0.2em] text-indigo-600 font-bold">Resume-to-job matching</p>
+                    <h3 class="text-xl font-bold text-gray-900 mt-2">Recommended application priority</h3>
+                    <p class="text-sm text-gray-500 mt-1">Jobs are ranked by compatibility and missing requirements.</p>
+                    <div id="dashboard-job-matches" class="space-y-4 mt-6"></div>
+                </article>
+            </div>
         </div>
+
+        <article id="evaluation-content" class="hidden bg-gradient-to-br from-indigo-50 via-white to-cyan-50 rounded-2xl border border-indigo-100 p-6 sm:p-8 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.2em] text-indigo-600 font-bold">Evaluation & accuracy report</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mt-2">Controlled 40-case benchmark</h3>
+                    <p id="evaluation-method" class="text-sm text-gray-600 mt-2 max-w-3xl"></p>
+                </div>
+                <span id="evaluation-type" class="text-xs font-bold text-indigo-700 bg-white border border-indigo-100 px-3 py-1.5 rounded-full"></span>
+            </div>
+            <div id="evaluation-metrics" class="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-7"></div>
+            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"><strong>Scientific limitation:</strong> <span id="evaluation-limitation"></span></div>
+        </article>
 
         <div id="insights-error" class="hidden bg-red-50 border border-red-200 text-red-700 p-5 rounded-xl"></div>
     </div>
@@ -238,6 +266,7 @@
             if (!response.ok) throw new Error(data.error || data.message || 'Unable to load insights');
 
             loading.classList.add('hidden');
+            renderEvaluation(data.evaluation);
             if (!data.latest) {
                 empty.classList.remove('hidden');
                 return;
@@ -258,6 +287,8 @@
         const evidence = latest.skillEvidence || [];
         const skillHealth = latest.skillHealth || [];
         const comparison = latest.improvementComparison || {};
+        const ats = latest.atsBreakdown || {};
+        const jobMatches = latest.jobMatches || [];
 
         document.getElementById('latest-score').textContent = `${latest.overallScore || 0}%`;
         document.getElementById('version-count').textContent = versions.length;
@@ -315,6 +346,43 @@
                 <p class="text-xs text-gray-400 mt-3">${item.lastUsedYear ? `Evidence dated ${item.lastUsedYear}` : 'Date not stated in resume'}</p>
             </div>`;
         }).join('') || '<p class="text-gray-500">No skill evidence is available yet.</p>';
+
+        document.getElementById('dashboard-ats-formula').textContent = ats.formula || 'Run a new analysis to generate the transparent weighted score.';
+        document.getElementById('dashboard-ats-breakdown').innerHTML = (ats.categories || []).map(item => `
+            <div>
+                <div class="flex items-center justify-between gap-3 text-sm"><span class="font-semibold">${escapeHtml(item.label)} <span class="text-slate-500">(${item.weight}%)</span></span><span class="font-bold">${item.score}/${item.weight}</span></div>
+                <div class="h-2 bg-white/10 rounded-full overflow-hidden mt-2"><div class="h-full bg-gradient-to-r from-indigo-400 to-cyan-300" style="width:${Math.max(0, Math.min(100, item.percentage || 0))}%"></div></div>
+                <p class="text-xs text-slate-400 mt-1">${escapeHtml(item.reason)}</p>
+            </div>`).join('') || '<p class="text-sm text-slate-400">Your saved analysis predates this feature. Analyze the resume once more to create the breakdown.</p>';
+
+        document.getElementById('dashboard-job-matches').innerHTML = jobMatches.map(job => `
+            <div class="rounded-xl border ${job.isBestMatch ? 'border-indigo-300 bg-indigo-50/60' : 'border-gray-200'} p-4">
+                <div class="flex items-start justify-between gap-3"><div><p class="font-bold text-gray-900">#${job.rank} ${escapeHtml(job.title)}</p><p class="text-xs text-gray-500 mt-1">${escapeHtml(job.priority)}</p></div><span class="text-xl font-bold text-indigo-600">${job.compatibility}%</span></div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden mt-3"><div class="h-full bg-indigo-600" style="width:${job.compatibility}%"></div></div>
+                <p class="text-xs text-rose-600 mt-3"><strong>Missing:</strong> ${job.missingSkills?.length ? job.missingSkills.map(escapeHtml).join(', ') : 'None detected'}</p>
+            </div>`).join('') || '<div class="rounded-xl border border-dashed border-gray-300 p-5 text-sm text-gray-500">Add job descriptions during your next resume analysis to compare application priorities here.</div>';
+    }
+
+    function renderEvaluation(evaluation) {
+        if (!evaluation) return;
+        document.getElementById('evaluation-content').classList.remove('hidden');
+        document.getElementById('evaluation-type').textContent = evaluation.datasetType || 'Controlled benchmark';
+        document.getElementById('evaluation-method').textContent = evaluation.methodology || '';
+        document.getElementById('evaluation-limitation').textContent = evaluation.limitation || '';
+        const metrics = evaluation.metrics || {};
+        const cards = [
+            ['Average score difference', `${metrics.averageScoringDifference ?? 0} pts`, 'Lower is better'],
+            ['Skill extraction accuracy', `${metrics.skillExtractionAccuracy ?? 0}%`, 'Known skill labels'],
+            ['Job-match accuracy', `${metrics.jobMatchAccuracy ?? 0}%`, 'Best-role selection'],
+            ['Response time', `${metrics.averageResponseTimeMs ?? 0} ms`, 'Per benchmark case'],
+            ['Invalid document accuracy', `${metrics.invalidDocumentAccuracy ?? 0}%`, '10 validity checks']
+        ];
+        document.getElementById('evaluation-metrics').innerHTML = cards.map(([label, value, note]) => `
+            <div class="rounded-xl bg-white border border-indigo-100 p-4">
+                <p class="text-xs text-gray-500 min-h-[32px]">${escapeHtml(label)}</p>
+                <p class="text-2xl font-bold text-gray-900 mt-2">${escapeHtml(value)}</p>
+                <p class="text-[11px] text-indigo-600 font-semibold mt-1">${escapeHtml(note)}</p>
+            </div>`).join('');
     }
 
     function logout() {

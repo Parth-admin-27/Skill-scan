@@ -1,10 +1,20 @@
 // ============================
 // Mobile Nav Menu
 // ============================
-function handleMenu() {
+function handleMenu(forceOpen) {
     const navDialog = document.getElementById('nav-dialog');
-    navDialog.classList.toggle('hidden');
+    if (!navDialog) return;
+    const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : navDialog.classList.contains('hidden');
+    navDialog.classList.toggle('hidden', !shouldOpen);
+    document.body.classList.toggle('overflow-hidden', shouldOpen);
+    navDialog.setAttribute('aria-hidden', String(!shouldOpen));
+    const menuButton = document.getElementById('mobile-menu-button');
+    if (menuButton) menuButton.setAttribute('aria-expanded', String(shouldOpen));
 }
+
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') handleMenu(false);
+});
 
 // ============================
 // Scroll-triggered animations

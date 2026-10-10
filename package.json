@@ -4,6 +4,7 @@
   "description": "",
   "main": "api/index.js",
   "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i tailwind-input.css -o output.css --minify",
     "test": "node --check backend/server.js && node --check backend/routes/auth.js && node --check backend/routes/resume.js && node backend/test_resume_scoring.js"
   },
   "author": "",
@@ -26,5 +27,8 @@
     "nodemailer": "^10.0.16",
     "otp-generator": "^4.0.1",
     "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
   }
 }
